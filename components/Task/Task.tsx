@@ -21,7 +21,7 @@ export default function Task(props: Props): ReactElement {
   const buttonRef = useRef<HTMLButtonElement>(null);
 
   return (
-    <div className="flex flex-row gap-0 items-center rounded-lg border border-gray-300 overflow-hidden shadow-md">
+    <div className="flex flex-row gap-0 items-center rounded-lg border border-gray-300 dark:border-gray-700  overflow-hidden shadow-md dark:shadow-[#141617] dark:bg-[#141617]">
       <TaskContent
         title={title}
         description={description}

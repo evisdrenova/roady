@@ -2,7 +2,7 @@ import { ReactElement } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowTopRightIcon, Half2Icon } from "@radix-ui/react-icons";
 import { Badge } from "../ui/badge";
-import { BiMessageSquareDots } from "react-icons/bi";
+import { BiMessageRounded, BiMessageSquareDots } from "react-icons/bi";
 import { TbCircleDashed } from "react-icons/tb";
 import { Circle } from "lucide-react";
 
@@ -42,7 +42,6 @@ export default function TaskContent(props: Props): ReactElement {
             <h2>{title}</h2>
             <ArrowTopRightIcon className="hidden group-hover:inline-block transition-opacity duration-300" />
           </div>
-          <p className="description">{description}</p>
         </div>
         <BadgeBar />
       </div>
@@ -55,7 +54,7 @@ function BadgeBar(): ReactElement {
     <div className="flex flex-row items-center gap-2 text-xs">
       <Badge variant="outline">Low</Badge>
       <Badge variant="outline" className="gap-2">
-        <BiMessageSquareDots /> <div>7</div>
+        <BiMessageRounded /> <div>7</div>
       </Badge>
     </div>
   );

@@ -28,7 +28,7 @@ export const Tabs = (props: TabProps) => {
 
   return (
     <>
-      <div className="flex flex-row items-center justify-start [perspective:1000px] relative overflow-auto sm:overflow-visible no-visible-scrollbar max-w-full w-full p-[2px] rounded-lg border border-gray-200">
+      <div className="flex flex-row items-center justify-start [perspective:1000px] relative overflow-auto sm:overflow-visible no-visible-scrollbar max-w-full w-full p-[4px] rounded-lg border border-gray-200 dark:border-gray-700">
         {propTabs.map((tab, idx) => (
           <button
             type="button"
@@ -36,7 +36,7 @@ export const Tabs = (props: TabProps) => {
             onClick={() => {
               moveSelectedTabToTop(idx);
             }}
-            className="relative px-2 py-2 rounded-lg"
+            className="relative px-2 py-2 rounded-lg dark:hover:bg-[#141617]"
             style={{
               transformStyle: "preserve-3d",
             }}
@@ -45,7 +45,7 @@ export const Tabs = (props: TabProps) => {
               <motion.div
                 layoutId="clickedbutton"
                 transition={{ type: "spring", bounce: 0.3, duration: 0.6 }}
-                className="absolute inset-0 bg-gray-200 dark:bg-zinc-800 rounded-lg "
+                className="absolute inset-0 bg-gray-200 dark:bg-[#232628] rounded-lg "
               />
             )}
 

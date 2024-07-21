@@ -3,7 +3,7 @@ import { useGetTasks } from "@/lib/hooks/useGetTasks";
 import Task from "../components/Task/Task";
 import TaskInput from "@/components/Task/TaskInput";
 import MainSkeleton from "@/components/ui/MainSkeleton";
-import { useState } from "react";
+import { ModeToggle } from "@/components/ModeToggle";
 
 export default function Page() {
   const { data, isLoading, mutate } = useGetTasks();
@@ -15,6 +15,9 @@ export default function Page() {
 
   return (
     <div className="w-full flex flex-col gap-6 py-6">
+      <div className="flex justify-end">
+        <ModeToggle />
+      </div>
       <TaskInput />
       <div className="flex flex-row items-start gap-4">
         {data?.roadmap?.map((status) => (
