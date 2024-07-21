@@ -74,6 +74,7 @@ export default function TaskInput(props: Props): ReactElement {
       toast.success("Successfully created task!");
       setIsSubmitting(false);
       form.reset();
+      setUserFilter("");
     } catch (error: any) {
       setIsSubmitting(false);
       toast.error("Unable to create new task");

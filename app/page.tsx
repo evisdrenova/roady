@@ -68,6 +68,7 @@ export default function Page() {
                     stage={status.title}
                     issueId={task.id}
                     mutate={mutate}
+                    priority={task.priority}
                   />
                 ))}
               </div>
