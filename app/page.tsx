@@ -18,7 +18,7 @@ export default function Page() {
       <div className="flex justify-end">
         <ModeToggle />
       </div>
-      <TaskInput />
+      <TaskInput mutate={mutate} />
       <div className="flex flex-row items-start gap-4">
         {data?.roadmap?.map((status) => (
           <div className="flex flex-col gap-2 w-full" key={status.title}>

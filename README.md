@@ -10,4 +10,3 @@ Roady is an open source public roadmap that users can upvote and comment on that
 - auth for submission
 - comments
 - expanded view sheet details
-- optimistic update for new task creation

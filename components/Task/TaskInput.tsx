@@ -6,7 +6,7 @@ import { Button } from "../ui/button";
 import { PaperclipIcon } from "lucide-react";
 import { Tabs } from "../tabs";
 import { Separator } from "../ui/separator";
-import { CreateTaskResponse } from "@/lib/types/types";
+import { CreateTaskResponse, GetTasksResponse } from "@/lib/types/types";
 import { useForm } from "react-hook-form";
 import { taskSchema } from "@/lib/types/zod";
 import * as z from "zod";
@@ -20,8 +20,12 @@ import {
 } from "@/components/ui/form";
 import Spinner from "../ui/spinner";
 import { toast } from "sonner";
-
-export default function TaskInput(): ReactElement {
+import { KeyedMutator } from "swr";
+interface Props {
+  mutate: KeyedMutator<GetTasksResponse>;
+}
+export default function TaskInput(props: Props): ReactElement {
+  const { mutate } = props;
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [priority, setPriority] = useState<string>("low");
 
@@ -36,6 +40,32 @@ export default function TaskInput(): ReactElement {
 
   async function onSubmit(values: z.infer<typeof taskSchema>) {
     setIsSubmitting(true);
+
+    const tempTaskId = "temporary-id";
+
+    const newTask = {
+      title: values.title,
+      description: values.description ?? "",
+      priority,
+      upVotes: 1,
+      id: tempTaskId,
+    };
+
+    // update local cache for optimistic update of the UI
+    mutate((data) => {
+      if (!data) return data;
+      const updatedRoadmap = data.roadmap.map((stage) => {
+        if (stage.title === "Backlog") {
+          return {
+            ...stage,
+            tasks: [newTask, ...stage.tasks],
+          };
+        }
+        return stage;
+      });
+
+      return { ...data, roadmap: updatedRoadmap };
+    }, false);
     try {
       await CreateTask(values.title, priority, values?.description ?? "");
       toast.success("Successfully created task!");
@@ -44,6 +74,24 @@ export default function TaskInput(): ReactElement {
     } catch (error: any) {
       setIsSubmitting(false);
       toast.error("Unable to create new task");
+      mutate((data) => {
+        if (!data) return data;
+        const updatedRoadmap = data.roadmap.map((stage) => {
+          if (stage.title === "Backlog") {
+            // roll task back since the update failed
+            const filteredTasks = stage.tasks.filter(
+              (item) => item.id != tempTaskId
+            );
+            return {
+              ...stage,
+              tasks: filteredTasks,
+            };
+          }
+          return stage;
+        });
+
+        return { ...data, roadmap: updatedRoadmap };
+      }, false);
     }
   }
 
