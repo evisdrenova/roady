@@ -33,6 +33,7 @@ export interface Task {
   description: string;
   upVotes: number;
   id: string;
+  priority: string;
 }
 
 export interface CreateTaskResponse {

@@ -8,26 +8,13 @@ import { Circle } from "lucide-react";
 
 interface Props {
   title: string;
-  description: string;
   stage: string;
+  priority: string;
   setOpenTaskSheet: () => void;
 }
 
 export default function TaskContent(props: Props): ReactElement {
-  const { title, description, setOpenTaskSheet, stage } = props;
-
-  const handleIcon = (stage: string): ReactElement => {
-    switch (stage) {
-      case "Backlog":
-        return <TbCircleDashed className="h-[14px] w-[14px]" />;
-      case "Todo":
-        return <Circle className="h-[14px] w-[14px]" />;
-      case "In Progress":
-        return <Half2Icon className="h-4 w-4 text-orange-300" />;
-      default:
-        return <div></div>;
-    }
-  };
+  const { title, setOpenTaskSheet, stage, priority } = props;
 
   return (
     <Button
@@ -43,16 +30,37 @@ export default function TaskContent(props: Props): ReactElement {
             <ArrowTopRightIcon className="hidden group-hover:inline-block transition-opacity duration-300" />
           </div>
         </div>
-        <BadgeBar />
+        <div className="pl-5">
+          <BadgeBar priority={priority} />
+        </div>
       </div>
     </Button>
   );
 }
 
-function BadgeBar(): ReactElement {
+export const handleIcon = (stage: string): ReactElement => {
+  switch (stage) {
+    case "Backlog":
+      return <TbCircleDashed className="h-[14px] w-[14px]" />;
+    case "Todo":
+      return <Circle className="h-[14px] w-[14px]" />;
+    case "In Progress":
+      return <Half2Icon className="h-4 w-4 text-orange-300" />;
+    default:
+      return <div></div>;
+  }
+};
+
+interface BadgeBarProps {
+  priority: string;
+}
+
+export function BadgeBar(props: BadgeBarProps): ReactElement {
+  const { priority } = props;
+
   return (
     <div className="flex flex-row items-center gap-2 text-xs">
-      <Badge variant="outline">Low</Badge>
+      <Badge variant="outline">{priority}</Badge>
       <Badge variant="outline" className="gap-2">
         <BiMessageRounded /> <div>7</div>
       </Badge>

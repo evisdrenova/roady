@@ -2,9 +2,9 @@
 import { ReactElement, useRef, useState } from "react";
 import UpVoteButton from "./UpVoteButton";
 import TaskContent from "./TaskContent";
-import TaskSheet from "./TaskSheet";
 import { KeyedMutator } from "swr";
 import { GetTasksResponse } from "@/lib/types/types";
+import TaskDialog from "./TaskDialog";
 
 interface Props {
   title: string;
@@ -12,11 +12,13 @@ interface Props {
   upVotes: number;
   stage: string;
   issueId: string;
+  priority: string;
   mutate: KeyedMutator<GetTasksResponse>;
 }
 
 export default function Task(props: Props): ReactElement {
-  const { title, description, upVotes, stage, issueId, mutate } = props;
+  const { title, description, upVotes, stage, issueId, mutate, priority } =
+    props;
 
   const buttonRef = useRef<HTMLButtonElement>(null);
 
@@ -24,9 +26,9 @@ export default function Task(props: Props): ReactElement {
     <div className="flex flex-row gap-0 items-center rounded-lg border border-gray-300 dark:border-gray-700  overflow-hidden shadow-md dark:shadow-[#141617] dark:bg-[#141617]">
       <TaskContent
         title={title}
-        description={description}
         setOpenTaskSheet={() => buttonRef.current?.click()}
         stage={stage}
+        priority={priority}
       />
       <UpVoteButton
         upVotes={upVotes}
@@ -34,7 +36,14 @@ export default function Task(props: Props): ReactElement {
         title={title}
         mutate={mutate}
       />
-      <TaskSheet buttonRef={buttonRef} />
+      <TaskDialog
+        buttonRef={buttonRef}
+        title={title}
+        description={description}
+        upVotes={upVotes}
+        priority={priority}
+        stage={stage}
+      />
     </div>
   );
 }
