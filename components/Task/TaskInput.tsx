@@ -21,11 +21,14 @@ import {
 import Spinner from "../ui/spinner";
 import { toast } from "sonner";
 import { KeyedMutator } from "swr";
+
 interface Props {
   mutate: KeyedMutator<GetTasksResponse>;
+  setUserFilter: (val: string) => void;
 }
+
 export default function TaskInput(props: Props): ReactElement {
-  const { mutate } = props;
+  const { mutate, setUserFilter } = props;
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [priority, setPriority] = useState<string>("low");
 
@@ -109,6 +112,10 @@ export default function TaskInput(props: Props): ReactElement {
                     placeholder="Title"
                     className="border-none focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-ring focus-visible:ring-offset-0 text-lg font-semibold placeholder:text-gray-300 dark:placeholder:text-gray-600 dark:bg-[#141617] "
                     {...field}
+                    onChange={(e) => {
+                      field.onChange(e);
+                      setUserFilter(e.target.value);
+                    }}
                   />
                 </FormControl>
                 <FormMessage />
