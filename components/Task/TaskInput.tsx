@@ -48,9 +48,9 @@ export default function TaskInput(): ReactElement {
   }
 
   return (
-    <div className="shadow-md border border-gray-300 p-2 rounded-lg flex flex-col gap-2">
+    <div className="shadow-md border border-gray-300 dark:border-gray-700 p-2 dark:bg-[#141617] rounded-lg flex flex-col gap-2 dark:shadow-[#141617]">
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <FormField
             control={form.control}
             name="title"
@@ -59,7 +59,7 @@ export default function TaskInput(): ReactElement {
                 <FormControl>
                   <Input
                     placeholder="Title"
-                    className="border-none focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-ring focus-visible:ring-offset-0 text-lg font-semibold placeholder:text-gray-300"
+                    className="border-none focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-ring focus-visible:ring-offset-0 text-lg font-semibold placeholder:text-gray-300 dark:placeholder:text-gray-600 dark:bg-[#141617] "
                     {...field}
                   />
                 </FormControl>
@@ -75,7 +75,7 @@ export default function TaskInput(): ReactElement {
                 <FormControl>
                   <Textarea
                     placeholder="Description. You can use text or code."
-                    className="border-none focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-ring focus-visible:ring-offset-0 text-sm placeholder:text-gray-300"
+                    className="border-none focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-ring focus-visible:ring-offset-0 text-sm placeholder:text-gray-300 dark:placeholder:text-gray-700 dark:bg-[#141617] "
                     {...field}
                   />
                 </FormControl>
@@ -83,7 +83,7 @@ export default function TaskInput(): ReactElement {
               </FormItem>
             )}
           />
-          <Separator />
+          <Separator className="dark:bg-gray-700" />
           <div className="w-full justify-between flex">
             <div className="flex flex-row gap-4 items-center">
               <PriorityTabs setPriority={setPriority} />
