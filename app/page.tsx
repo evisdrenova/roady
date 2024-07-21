@@ -13,7 +13,6 @@ export default function Page() {
   const [filteredData, setFilteredData] = useState<Stages[] | undefined>(
     data?.roadmap
   );
-  console.log("data", data);
 
   useEffect(() => {
     if (data?.roadmap) {
@@ -35,7 +34,6 @@ export default function Page() {
   if (isLoading || !mutate) {
     return <MainSkeleton />;
   }
-  console.log("filted", filteredData);
 
   return (
     <div className="w-full flex flex-col gap-6 py-6">
