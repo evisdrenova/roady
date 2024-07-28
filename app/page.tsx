@@ -20,8 +20,6 @@ export default function Page() {
     data?.roadmap
   );
 
-  console.log("isAUthn", session.data);
-
   useEffect(() => {
     if (data?.roadmap) {
       if (userFilter) {
@@ -47,7 +45,7 @@ export default function Page() {
 
   return (
     <div className="w-full flex flex-col gap-6 py-6">
-      <div className="flex justify-end">
+      <div className="flex justify-end items-center gap-4">
         <ModeToggle />
         <GoogleOAuth />
       </div>

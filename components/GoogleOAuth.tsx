@@ -1,9 +1,17 @@
 import { ReactElement } from "react";
 import { Button } from "./ui/button";
-import UserAvatar from "./ui/UserAvatar";
-import { signIn, signOut } from "next-auth/react";
+import { signIn, signOut, useSession } from "next-auth/react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { RxAvatar } from "react-icons/rx";
 
-export default function GoogleOAuth() {
+export default function GoogleOAuth(): ReactElement {
+  const session = useSession();
   const launchGoogleOAuth = async () => {
     await signIn("google");
   };
@@ -12,10 +20,35 @@ export default function GoogleOAuth() {
     await signOut();
   };
 
+  console.log("sess", session.data?.user);
   return (
     <>
-      <Button onClick={() => launchGoogleOAuth()}>Login with Google</Button>
-      <Button onClick={() => signOutButton()}>Logout</Button>
+      {session.status == "authenticated" ? (
+        <DropdownMenu>
+          <DropdownMenuTrigger>
+            <Avatar className="w-6 h-6">
+              <AvatarImage src={session.data.user?.image ?? ""} />
+              <AvatarFallback>
+                {session?.data.user?.name?.charAt(0)}
+              </AvatarFallback>
+            </Avatar>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuItem onClick={() => signOutButton()}>
+              Logout
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      ) : (
+        <Button
+          onClick={launchGoogleOAuth}
+          variant="ghost"
+          className="rounded"
+          size="sm"
+        >
+          <RxAvatar className="w-6 h-6" />
+        </Button>
+      )}
     </>
   );
 }
