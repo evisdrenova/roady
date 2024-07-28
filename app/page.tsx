@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { Stages } from "@/lib/types/types";
 import Spinner from "@/components/ui/spinner";
 import { CheckCheck, CircleCheck } from "lucide-react";
+import GoogleOAuth from "@/components/GoogleOAuth";
 
 export default function Page() {
   const { data, isLoading, mutate } = useGetTasks();
@@ -43,6 +44,7 @@ export default function Page() {
     <div className="w-full flex flex-col gap-6 py-6">
       <div className="flex justify-end">
         <ModeToggle />
+        <GoogleOAuth />
       </div>
       <div className="flex flex-col gap-1">
         {userFilter && hasTasks && (
