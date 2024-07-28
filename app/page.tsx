@@ -9,13 +9,17 @@ import { Stages } from "@/lib/types/types";
 import Spinner from "@/components/ui/spinner";
 import { CheckCheck, CircleCheck } from "lucide-react";
 import GoogleOAuth from "@/components/GoogleOAuth";
+import useAuth from "@/lib/hooks/useAuth";
 
 export default function Page() {
+  // const { isAuthenticated, loading } = useAuth();
   const { data, isLoading, mutate } = useGetTasks();
   const [userFilter, setUserFilter] = useState<string>();
   const [filteredData, setFilteredData] = useState<Stages[] | undefined>(
     data?.roadmap
   );
+
+  // console.log("isAUthn", isAuthenticated);
 
   useEffect(() => {
     if (data?.roadmap) {
@@ -44,7 +48,7 @@ export default function Page() {
     <div className="w-full flex flex-col gap-6 py-6">
       <div className="flex justify-end">
         <ModeToggle />
-        <GoogleOAuth />
+        <GoogleOAuth isAuthenticated={false} />
       </div>
       <div className="flex flex-col gap-1">
         {userFilter && hasTasks && (

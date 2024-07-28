@@ -39,3 +39,7 @@ export interface Task {
 export interface CreateTaskResponse {
   success: string;
 }
+
+export interface OAUthResponse {
+  valid: boolean;
+}

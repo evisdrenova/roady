@@ -2,12 +2,25 @@
 import { ReactElement } from "react";
 import { Button } from "./ui/button";
 import { useRouter } from "next/navigation";
+import UserAvatar from "./ui/UserAvatar";
+import { signIn } from "@/auth";
 
-export default function GoogleOAuth(): ReactElement {
-  const router = useRouter();
+interface Props {
+  isAuthenticated: boolean;
+}
+
+export default function GoogleOAuth(props: Props): ReactElement {
+  const { isAuthenticated } = props;
   const launchGoogleOAuth = () => {
-    router.push("/api/auth/google");
-    router.refresh;
+    signIn("google");
   };
-  return <Button onClick={launchGoogleOAuth}>Login with Google</Button>;
+  return (
+    <>
+      {isAuthenticated ? (
+        <UserAvatar />
+      ) : (
+        <Button onClick={launchGoogleOAuth}>Login with Google</Button>
+      )}
+    </>
+  );
 }

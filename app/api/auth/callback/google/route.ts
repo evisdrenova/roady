@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { OAuth2Client } from "google-auth-library";
 import { Pool } from "pg";
+import jwt from "jsonwebtoken";
 
 const oauth2client = new OAuth2Client(
   process.env.OAUTH_CLIENT_ID,
@@ -13,9 +14,6 @@ const pool = new Pool({
 });
 
 export async function GET(req: NextRequest) {
-  console.log(
-    `${process.env.NEXT_PUBLIC_URL}${process.env.GOOGLE_AUTH_REDIRECT}`
-  );
   let code;
   let state;
 
@@ -51,14 +49,34 @@ export async function GET(req: NextRequest) {
     );
     client.release();
   } catch (error) {
-    console.error("Error storing tokens in the database", error);
+    console.error("Unable to store data in databse", error);
     return NextResponse.json(
-      { error: "Failed to store tokens" },
+      { error: "Failed to store data" },
       { status: 500 }
     );
   }
 
-  return NextResponse.redirect(
-    process.env.NEXT_PUBLIC_URL ?? "http://localhost:3000"
+  console.log("the token", tokens.access_token);
+
+  // Generate JWT and sign it using jwt secret
+  const jwtToken = jwt.sign(
+    { access_token: tokens.access_token },
+    process.env.JWT_SECRET ?? "",
+    { algorithm: "HS256", expiresIn: "1h" }
   );
+
+  console.log("the signed token", jwtToken);
+
+  // Set the JWT as a cookie
+  const response = NextResponse.redirect(
+    process.env.NEXT_PUBLIC_URL ?? "http://localhost:3001"
+  );
+  response.cookies.set("roady_auth_token", jwtToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+    path: process.env.NEXT_PUBLIC_URL ?? "http://localhost:3001",
+  });
+
+  return response;
 }
