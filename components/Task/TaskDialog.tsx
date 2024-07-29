@@ -10,7 +10,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "../ui/button";
-import { Badge } from "../ui/badge";
 import { BadgeBar, handleIcon } from "./TaskContent";
 import { Separator } from "../ui/separator";
 

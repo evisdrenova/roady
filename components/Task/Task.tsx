@@ -14,11 +14,22 @@ interface Props {
   issueId: string;
   priority: string;
   mutate: KeyedMutator<GetTasksResponse>;
+  setOpenOAuth: (val: boolean) => void;
+  openOAuth: boolean;
 }
 
 export default function Task(props: Props): ReactElement {
-  const { title, description, upVotes, stage, issueId, mutate, priority } =
-    props;
+  const {
+    title,
+    description,
+    upVotes,
+    stage,
+    issueId,
+    mutate,
+    priority,
+    setOpenOAuth,
+    openOAuth,
+  } = props;
 
   const buttonRef = useRef<HTMLButtonElement>(null);
 
@@ -35,6 +46,8 @@ export default function Task(props: Props): ReactElement {
         issueId={issueId}
         title={title}
         mutate={mutate}
+        setOpenOAuth={setOpenOAuth}
+        openOAuth={openOAuth}
       />
       <TaskDialog
         buttonRef={buttonRef}

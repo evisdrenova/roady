@@ -6,21 +6,28 @@ import Spinner from "../ui/spinner";
 import { GetTasksResponse } from "@/lib/types/types";
 import { KeyedMutator } from "swr";
 import { toast } from "sonner";
+import { useSession } from "next-auth/react";
 
 interface Props {
   upVotes: number;
   issueId: string;
   title: string;
   mutate: KeyedMutator<GetTasksResponse>;
+  setOpenOAuth: (val: boolean) => void;
+  openOAuth: boolean;
 }
 
 export default function UpVoteButton(props: Props): ReactElement {
-  const { upVotes, issueId, title, mutate } = props;
+  const { upVotes, issueId, title, mutate, openOAuth, setOpenOAuth } = props;
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const user = useSession();
 
   async function handleUpVote(issueId: string, title: string, upVotes: number) {
+    if (!user.data) {
+      setOpenOAuth(true);
+      return;
+    }
     setIsSubmitting(true);
-
     // update local cache for optimistic update of the UI
     mutate((data) => {
       if (!data) return data;
