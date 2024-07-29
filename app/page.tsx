@@ -11,6 +11,8 @@ import { CheckCheck, CircleCheck } from "lucide-react";
 import GoogleOAuth from "@/components/GoogleOAuth";
 import { auth } from "@/auth";
 import { useSession } from "next-auth/react";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 export default function Page() {
   const session = useSession();
@@ -39,6 +41,7 @@ export default function Page() {
         setOpenOAuth={setOpenOAuth}
         openOAuth={openOAuth}
       />
+      <Button onClick={() => toast.success("yay")}>Click</Button>
       <div className="flex flex-row items-start gap-4">
         {data?.roadmap.map((status) => (
           <div className="flex flex-col gap-2 w-full" key={status.title}>
