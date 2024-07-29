@@ -8,6 +8,4 @@ Roady is an open source public roadmap that users can upvote and comment on that
 - mdx support for code snippets
 - comments
 - expanded task modal details
-- description isn't saving correctly
-- dark mode for toasts
-- sort tickets in stage by priority
+- retain the ticket info if user is signing in for the first time since right now it goes away, probably use local storage for this

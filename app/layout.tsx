@@ -21,7 +21,7 @@ export default function RootLayout({
             disableTransitionOnChange
           >
             <div className="mx-auto w-2/3">{children}</div>
-            <Toaster richColors />
+            <Toaster theme="system" richColors />
           </ThemeProvider>
         </body>
       </html>
