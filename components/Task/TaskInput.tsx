@@ -11,17 +11,16 @@ import { useForm } from "react-hook-form";
 import { taskSchema } from "@/lib/types/zod";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import Spinner from "../ui/spinner";
 import { toast } from "sonner";
 import { KeyedMutator } from "swr";
 import { useSession } from "next-auth/react";
+import { useEditor, EditorContent, JSONContent } from "@tiptap/react";
+import CodeBlock from "@tiptap/extension-code-block";
+import Document from "@tiptap/extension-document";
+import Paragraph from "@tiptap/extension-paragraph";
+import Text from "@tiptap/extension-text";
 
 interface Props {
   mutate: KeyedMutator<GetTasksResponse>;
@@ -29,10 +28,16 @@ interface Props {
   openOAuth: boolean;
 }
 
+// Wire up tiptap so that it takes in user input correctly and renders code and text and emojis
+// then clean it up so that it gets stored in linear correctly as well
+// then wire up retrieving it from linear and rendering it on the front end correctly
+
 export default function TaskInput(props: Props): ReactElement {
   const { mutate, setOpenOAuth, openOAuth } = props;
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [priority, setPriority] = useState<string>("low");
+  const [description, setDescription] = useState<JSONContent>();
+  const [title, setTitle] = useState<JSONContent>();
   const user = useSession();
 
   const form = useForm<z.infer<typeof taskSchema>>({
@@ -106,6 +111,11 @@ export default function TaskInput(props: Props): ReactElement {
 
   const isFormDirty = Object.keys(form.formState.dirtyFields).length > 0;
 
+  const editor = useEditor({
+    extensions: [Document, Paragraph, Text, CodeBlock],
+    content: "<p>Hello World! 🌎️</p>",
+  });
+
   return (
     <div className="shadow-md border border-gray-300 dark:border-gray-700 p-2 dark:bg-[#141617] rounded-lg flex flex-col gap-2 dark:shadow-[#141617]">
       <Form {...form}>
@@ -143,6 +153,7 @@ export default function TaskInput(props: Props): ReactElement {
               </FormItem>
             )}
           />
+          <EditorContent editor={editor} />
           <Separator className="dark:bg-gray-700" />
           <div className="w-full justify-between flex">
             <div className="flex flex-row gap-4 items-center">
