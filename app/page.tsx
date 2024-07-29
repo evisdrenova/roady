@@ -41,7 +41,6 @@ export default function Page() {
         setOpenOAuth={setOpenOAuth}
         openOAuth={openOAuth}
       />
-      <Button onClick={() => toast.success("yay")}>Click</Button>
       <div className="flex flex-row items-start gap-4">
         {data?.roadmap.map((status) => (
           <div className="flex flex-col gap-2 w-full" key={status.title}>
