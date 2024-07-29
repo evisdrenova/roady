@@ -135,7 +135,7 @@ export default function TaskInput(props: Props): ReactElement {
               <FormItem>
                 <FormControl>
                   <Textarea
-                    placeholder="Description. You can use text or code."
+                    placeholder="Task Description. You can use text or code."
                     className="border-none focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-ring focus-visible:ring-offset-0 text-sm placeholder:text-gray-300 dark:placeholder:text-gray-700 dark:bg-[#141617] "
                     {...field}
                   />
