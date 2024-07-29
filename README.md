@@ -6,7 +6,6 @@ Roady is an open source public roadmap that users can upvote and comment on that
 
 - support for uploading pictures
 - mdx support for code snippets
-- auth for submission
 - comments
 - expanded task modal details
 - description isn't saving correctly

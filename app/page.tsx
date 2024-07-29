@@ -22,6 +22,12 @@ export default function Page() {
     return <MainSkeleton />;
   }
 
+  const priorityOrder: { [key: string]: number } = {
+    high: 1,
+    medium: 2,
+    low: 3,
+  };
+
   return (
     <div className="w-full flex flex-col gap-6 py-6">
       <div className="flex justify-end items-center gap-4">
@@ -37,20 +43,24 @@ export default function Page() {
         {data?.roadmap.map((status) => (
           <div className="flex flex-col gap-2 w-full" key={status.title}>
             <h1>{status.title}</h1>
-            {status.tasks.map((task) => (
-              <Task
-                title={task.title}
-                description={task.description}
-                upVotes={task.upVotes}
-                key={task.title}
-                stage={status.title}
-                issueId={task.id}
-                mutate={mutate}
-                priority={task.priority}
-                setOpenOAuth={setOpenOAuth}
-                openOAuth={openOAuth}
-              />
-            ))}
+            {status.tasks
+              .sort(
+                (a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]
+              )
+              .map((task) => (
+                <Task
+                  title={task.title}
+                  description={task.description}
+                  upVotes={task.upVotes}
+                  key={task.title}
+                  stage={status.title}
+                  issueId={task.id}
+                  mutate={mutate}
+                  priority={task.priority}
+                  setOpenOAuth={setOpenOAuth}
+                  openOAuth={openOAuth}
+                />
+              ))}
           </div>
         ))}
       </div>
