@@ -1,54 +1,42 @@
 import { ReactElement } from "react";
 import { Button } from "./ui/button";
-import { signIn, signOut, useSession } from "next-auth/react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { signIn } from "next-auth/react";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { RxAvatar } from "react-icons/rx";
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { FcGoogle } from "react-icons/fc";
 
-export default function GoogleOAuth(): ReactElement {
-  const session = useSession();
+interface Props {
+  setOpenOAuth: (val: boolean | ((prev: boolean) => boolean)) => void;
+  openOAuth: boolean;
+}
+
+export default function GoogleOAuth(props: Props): ReactElement {
+  const { setOpenOAuth, openOAuth } = props;
   const launchGoogleOAuth = async () => {
     await signIn("google");
   };
 
-  const signOutButton = async () => {
-    await signOut();
-  };
-
-  console.log("sess", session.data?.user);
   return (
-    <>
-      {session.status == "authenticated" ? (
-        <DropdownMenu>
-          <DropdownMenuTrigger>
-            <Avatar className="w-6 h-6">
-              <AvatarImage src={session.data.user?.image ?? ""} />
-              <AvatarFallback>
-                {session?.data.user?.name?.charAt(0)}
-              </AvatarFallback>
-            </Avatar>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuItem onClick={() => signOutButton()}>
-              Logout
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      ) : (
-        <Button
-          onClick={launchGoogleOAuth}
-          variant="ghost"
-          className="rounded"
-          size="sm"
-        >
-          <RxAvatar className="w-6 h-6" />
-        </Button>
-      )}
-    </>
+    <Dialog onOpenChange={() => setOpenOAuth((prev) => !prev)} open={openOAuth}>
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>Verify your email to continue</DialogTitle>
+        </DialogHeader>
+        <div className="grid gap-4 py-4">
+          <Button
+            onClick={launchGoogleOAuth}
+            className="rounded space-x-2"
+            size="sm"
+          >
+            <FcGoogle />
+            <div>Login with Google</div>
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }

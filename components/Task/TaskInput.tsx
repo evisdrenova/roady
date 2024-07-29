@@ -21,16 +21,19 @@ import {
 import Spinner from "../ui/spinner";
 import { toast } from "sonner";
 import { KeyedMutator } from "swr";
+import { useSession } from "next-auth/react";
 
 interface Props {
   mutate: KeyedMutator<GetTasksResponse>;
-  setUserFilter: (val: string) => void;
+  setOpenOAuth: (val: boolean | ((prev: boolean) => boolean)) => void;
+  openOAuth: boolean;
 }
 
 export default function TaskInput(props: Props): ReactElement {
-  const { mutate, setUserFilter } = props;
+  const { mutate, setOpenOAuth, openOAuth } = props;
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [priority, setPriority] = useState<string>("low");
+  const user = useSession();
 
   const form = useForm<z.infer<typeof taskSchema>>({
     resolver: zodResolver(taskSchema),
@@ -42,8 +45,11 @@ export default function TaskInput(props: Props): ReactElement {
   });
 
   async function onSubmit(values: z.infer<typeof taskSchema>) {
+    if (!user.data) {
+      setOpenOAuth(true);
+      return;
+    }
     setIsSubmitting(true);
-
     const tempTaskId = "temporary-id";
 
     const newTask = {
@@ -74,7 +80,6 @@ export default function TaskInput(props: Props): ReactElement {
       toast.success("Successfully created task!");
       setIsSubmitting(false);
       form.reset();
-      setUserFilter("");
     } catch (error: any) {
       setIsSubmitting(false);
       toast.error("Unable to create new task");
@@ -99,6 +104,8 @@ export default function TaskInput(props: Props): ReactElement {
     }
   }
 
+  const isFormDirty = Object.keys(form.formState.dirtyFields).length > 0;
+
   return (
     <div className="shadow-md border border-gray-300 dark:border-gray-700 p-2 dark:bg-[#141617] rounded-lg flex flex-col gap-2 dark:shadow-[#141617]">
       <Form {...form}>
@@ -115,11 +122,9 @@ export default function TaskInput(props: Props): ReactElement {
                     {...field}
                     onChange={(e) => {
                       field.onChange(e);
-                      setUserFilter(e.target.value);
                     }}
                   />
                 </FormControl>
-                <FormMessage />
               </FormItem>
             )}
           />
@@ -135,7 +140,6 @@ export default function TaskInput(props: Props): ReactElement {
                     {...field}
                   />
                 </FormControl>
-                <FormMessage />
               </FormItem>
             )}
           />
@@ -147,13 +151,25 @@ export default function TaskInput(props: Props): ReactElement {
                 <PaperclipIcon className="w-4 h-4" />
               </Button>
             </div>
-            <Button
-              className="rounded-full"
-              type="submit"
-              disabled={isSubmitting || !form.formState.isValid}
-            >
-              {isSubmitting ? <Spinner /> : "Submit"}
-            </Button>
+            <div className="flex flex-row gap-2">
+              {isFormDirty && (
+                <Button
+                  className="rounded-xl"
+                  type="submit"
+                  variant="secondary"
+                  onClick={() => form.reset()}
+                >
+                  Clear
+                </Button>
+              )}
+              <Button
+                className="rounded-xl"
+                type="submit"
+                disabled={isSubmitting || !form.formState.isValid}
+              >
+                {isSubmitting ? <Spinner /> : "Submit"}
+              </Button>
+            </div>
           </div>
         </form>
       </Form>
