@@ -1,7 +1,6 @@
 "use client";
-import { ReactElement, useState } from "react";
+import { ReactElement, useEffect, useState } from "react";
 import { Input } from "../ui/input";
-import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
 import { PaperclipIcon } from "lucide-react";
 import { Tabs } from "../tabs";
@@ -16,11 +15,13 @@ import Spinner from "../ui/spinner";
 import { toast } from "sonner";
 import { KeyedMutator } from "swr";
 import { useSession } from "next-auth/react";
-import { useEditor, EditorContent, JSONContent } from "@tiptap/react";
+import { useEditor, EditorContent, JSONContent, Editor } from "@tiptap/react";
 import CodeBlock from "@tiptap/extension-code-block";
 import Document from "@tiptap/extension-document";
 import Paragraph from "@tiptap/extension-paragraph";
 import Text from "@tiptap/extension-text";
+import Code from "@tiptap/extension-code";
+import { Placeholder } from "@tiptap/extension-placeholder";
 
 interface Props {
   mutate: KeyedMutator<GetTasksResponse>;
@@ -28,16 +29,15 @@ interface Props {
   openOAuth: boolean;
 }
 
-// Wire up tiptap so that it takes in user input correctly and renders code and text and emojis
-// then clean it up so that it gets stored in linear correctly as well
+// Wire up tiptap so that it gets stored in linear correctly as well
 // then wire up retrieving it from linear and rendering it on the front end correctly
 
 export default function TaskInput(props: Props): ReactElement {
   const { mutate, setOpenOAuth, openOAuth } = props;
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [priority, setPriority] = useState<string>("low");
-  const [description, setDescription] = useState<JSONContent>();
-  const [title, setTitle] = useState<JSONContent>();
+  const [description, setDescription] = useState<string>("");
+  // const [title, setTitle] = useState<JSONContent>();
   const user = useSession();
 
   const form = useForm<z.infer<typeof taskSchema>>({
@@ -112,9 +112,54 @@ export default function TaskInput(props: Props): ReactElement {
   const isFormDirty = Object.keys(form.formState.dirtyFields).length > 0;
 
   const editor = useEditor({
-    extensions: [Document, Paragraph, Text, CodeBlock],
-    content: "<p>Hello World! 🌎️</p>",
+    extensions: [
+      Document,
+      Paragraph,
+      Text,
+      Placeholder.configure({
+        placeholder: "Task Description. You can use text or code.",
+      }),
+      Code.configure({
+        HTMLAttributes: {
+          class: "tt-custom-code",
+        },
+      }),
+      CodeBlock.configure({
+        HTMLAttributes: {
+          class: "tt-custom-code-block",
+          exitOnTripleEnter: true,
+          exitOnArrowDown: true,
+        },
+      }),
+    ],
+    content: "",
+    onUpdate: ({ editor }) => {
+      setDescription(extractTextFromHTML(editor.getHTML()));
+      form.setValue("description", extractTextFromHTML(editor.getHTML()));
+    },
   });
+
+  // useEffect(() => {
+  //   if (editor) {
+  //     editor.on("update", () => {
+  //       const html = editor.getHTML();
+  //       // setDescription(JSON.stringify(editor.getJSON()));
+  //       const extractedText = html.replace(/<\/?[^>]+(>|$)/g, "");
+  //       setDescription(extractedText);
+  //       form.setValue("description", extractedText);
+  //     });
+  //   }
+  //   return () => {
+  //     if (editor) {
+  //       editor.destroy();
+  //     }
+  //   };
+  // }, [editor, setDescription]);
+
+  console.log("description", description);
+  // console.log("json", editor?.getJSON());
+  // console.log("json", editor?.getText());
+  console.log("json", editor?.getHTML());
 
   return (
     <div className="shadow-md border border-gray-300 dark:border-gray-700 p-2 dark:bg-[#141617] rounded-lg flex flex-col gap-2 dark:shadow-[#141617]">
@@ -138,7 +183,10 @@ export default function TaskInput(props: Props): ReactElement {
               </FormItem>
             )}
           />
-          <FormField
+          <div className="pl-3 min-h-[80px]">
+            <EditorContent editor={editor} />
+          </div>
+          {/* <FormField
             control={form.control}
             name="description"
             render={({ field }) => (
@@ -152,7 +200,7 @@ export default function TaskInput(props: Props): ReactElement {
                 </FormControl>
               </FormItem>
             )}
-          />
+          /> */}
           <EditorContent editor={editor} />
           <Separator className="dark:bg-gray-700" />
           <div className="w-full justify-between flex">
@@ -168,7 +216,8 @@ export default function TaskInput(props: Props): ReactElement {
                   className="rounded-xl"
                   type="submit"
                   variant="secondary"
-                  onClick={() => form.reset()}
+                  // onClick={() => form.reset()}
+                  onClick={() => editor?.commands.setContent("")}
                 >
                   Clear
                 </Button>
@@ -236,4 +285,42 @@ async function CreateTask(
     throw new Error(body.message);
   }
   return await res.json();
+}
+
+function extractTextFromHTML(htmlString: string): string {
+  // Create a temporary DOM element to parse the HTML string
+  const tempDiv = document.createElement("div");
+  tempDiv.innerHTML = htmlString;
+
+  // Function to recursively extract text while preserving backticks and quotes
+  function getText(node: Node): string {
+    let text = "";
+
+    node.childNodes.forEach((child) => {
+      if (child.nodeType === Node.TEXT_NODE) {
+        text += child.textContent;
+      } else if (child.nodeType === Node.ELEMENT_NODE) {
+        const element = child as HTMLElement;
+        if (element.tagName === "CODE" || element.tagName === "PRE") {
+          const isMultiLine = element.tagName === "PRE";
+          const backticks = isMultiLine ? "```" : "`";
+          text += `${backticks}${element.textContent}${backticks}`;
+        } else {
+          text += getText(child);
+        }
+      }
+
+      // Preserve carriage returns
+      if (
+        child.nodeType === Node.ELEMENT_NODE &&
+        (child as HTMLElement).tagName === "BR"
+      ) {
+        text += "\n";
+      }
+    });
+
+    return text;
+  }
+
+  return getText(tempDiv);
 }

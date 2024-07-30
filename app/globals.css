@@ -79,4 +79,25 @@
   h2 {
     @apply truncate text-sm font-medium;
   }
+
+  .tt-custom-code {
+    @apply text-gray-800 dark:text-gray-100 rounded bg-gray-200 dark:bg-gray-700 p-[2px] text-xs;
+  }
+
+  .tt-custom-code-block {
+    @apply text-gray-800 dark:text-gray-100 rounded bg-gray-200 dark:bg-gray-700 px-4 py-[2px] inline-block text-xs;
+  }
+}
+
+.tiptap p.is-editor-empty:first-child::before {
+  color: #4b5563;
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+  font-size: 14px;
+}
+
+.ProseMirror-focused {
+  outline: none;
 }
