@@ -37,7 +37,6 @@ export default function TaskInput(props: Props): ReactElement {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [priority, setPriority] = useState<string>("low");
   const [description, setDescription] = useState<string>("");
-  // const [title, setTitle] = useState<JSONContent>();
   const user = useSession();
 
   const form = useForm<z.infer<typeof taskSchema>>({
@@ -84,6 +83,7 @@ export default function TaskInput(props: Props): ReactElement {
       await CreateTask(values.title, priority, values?.description ?? "");
       toast.success("Successfully created task!");
       setIsSubmitting(false);
+      editor?.commands.setContent("");
       form.reset();
     } catch (error: any) {
       setIsSubmitting(false);
@@ -133,33 +133,21 @@ export default function TaskInput(props: Props): ReactElement {
       }),
     ],
     content: "",
-    onUpdate: ({ editor }) => {
-      setDescription(extractTextFromHTML(editor.getHTML()));
-      form.setValue("description", extractTextFromHTML(editor.getHTML()));
-    },
   });
 
-  // useEffect(() => {
-  //   if (editor) {
-  //     editor.on("update", () => {
-  //       const html = editor.getHTML();
-  //       // setDescription(JSON.stringify(editor.getJSON()));
-  //       const extractedText = html.replace(/<\/?[^>]+(>|$)/g, "");
-  //       setDescription(extractedText);
-  //       form.setValue("description", extractedText);
-  //     });
-  //   }
-  //   return () => {
-  //     if (editor) {
-  //       editor.destroy();
-  //     }
-  //   };
-  // }, [editor, setDescription]);
-
-  console.log("description", description);
-  // console.log("json", editor?.getJSON());
-  // console.log("json", editor?.getText());
-  console.log("json", editor?.getHTML());
+  useEffect(() => {
+    if (editor) {
+      editor.on("update", () => {
+        setDescription(parseDocument(editor.getJSON()));
+        form.setValue("description", parseDocument(editor.getJSON()));
+      });
+    }
+    return () => {
+      if (editor) {
+        editor.destroy();
+      }
+    };
+  }, [editor, setDescription, form]);
 
   return (
     <div className="shadow-md border border-gray-300 dark:border-gray-700 p-2 dark:bg-[#141617] rounded-lg flex flex-col gap-2 dark:shadow-[#141617]">
@@ -186,21 +174,6 @@ export default function TaskInput(props: Props): ReactElement {
           <div className="pl-3 min-h-[80px]">
             <EditorContent editor={editor} />
           </div>
-          {/* <FormField
-            control={form.control}
-            name="description"
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <Textarea
-                    placeholder="Task Description. You can use text or code."
-                    className="border-none focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-ring focus-visible:ring-offset-0 text-sm placeholder:text-gray-300 dark:placeholder:text-gray-700 dark:bg-[#141617] "
-                    {...field}
-                  />
-                </FormControl>
-              </FormItem>
-            )}
-          /> */}
           <EditorContent editor={editor} />
           <Separator className="dark:bg-gray-700" />
           <div className="w-full justify-between flex">
@@ -216,8 +189,10 @@ export default function TaskInput(props: Props): ReactElement {
                   className="rounded-xl"
                   type="submit"
                   variant="secondary"
-                  // onClick={() => form.reset()}
-                  onClick={() => editor?.commands.setContent("")}
+                  onClick={() => {
+                    editor?.commands.setContent("");
+                    form.reset();
+                  }}
                 >
                   Clear
                 </Button>
@@ -287,40 +262,29 @@ async function CreateTask(
   return await res.json();
 }
 
-function extractTextFromHTML(htmlString: string): string {
-  // Create a temporary DOM element to parse the HTML string
-  const tempDiv = document.createElement("div");
-  tempDiv.innerHTML = htmlString;
-
-  // Function to recursively extract text while preserving backticks and quotes
-  function getText(node: Node): string {
-    let text = "";
-
-    node.childNodes.forEach((child) => {
-      if (child.nodeType === Node.TEXT_NODE) {
-        text += child.textContent;
-      } else if (child.nodeType === Node.ELEMENT_NODE) {
-        const element = child as HTMLElement;
-        if (element.tagName === "CODE" || element.tagName === "PRE") {
-          const isMultiLine = element.tagName === "PRE";
-          const backticks = isMultiLine ? "```" : "`";
-          text += `${backticks}${element.textContent}${backticks}`;
-        } else {
-          text += getText(child);
-        }
+function parseContent(content: JSONContent[]): string {
+  return content
+    .map((item) => {
+      if (item.type === "text") {
+        const isInlineCode = item.marks?.some((mark) => mark.type === "code");
+        return isInlineCode ? `\`${item.text}\`` : item.text;
       }
+      return "";
+    })
+    .join("");
+}
 
-      // Preserve carriage returns
-      if (
-        child.nodeType === Node.ELEMENT_NODE &&
-        (child as HTMLElement).tagName === "BR"
-      ) {
-        text += "\n";
-      }
-    });
-
-    return text;
+function parseNode(node: JSONContent): string {
+  if (node.type === "paragraph") {
+    return parseContent(node.content ?? []) + "\n";
+  } else if (node.type === "codeBlock") {
+    const codeContent = parseContent(node.content ?? []);
+    return `\`\`\`\n${codeContent}\n\`\`\`\n`;
   }
+  return "";
+}
 
-  return getText(tempDiv);
+function parseDocument(document: JSONContent): string {
+  if (!document.content) return "";
+  return document.content.map((node) => parseNode(node)).join("");
 }
