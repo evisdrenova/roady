@@ -4,15 +4,9 @@ import Task from "../components/Task/Task";
 import TaskInput from "@/components/Task/TaskInput";
 import MainSkeleton from "@/components/ui/MainSkeleton";
 import { ModeToggle } from "@/components/ModeToggle";
-import { useEffect, useState } from "react";
-import { Stages } from "@/lib/types/types";
-import Spinner from "@/components/ui/spinner";
-import { CheckCheck, CircleCheck } from "lucide-react";
+import { useState } from "react";
 import GoogleOAuth from "@/components/GoogleOAuth";
-import { auth } from "@/auth";
 import { useSession } from "next-auth/react";
-import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
 import UserProfile from "@/components/UserProfile";
 
 export default function Page() {

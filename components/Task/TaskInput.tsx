@@ -1,5 +1,5 @@
 "use client";
-import { ReactElement, useEffect, useState } from "react";
+import { ReactElement, useEffect, useRef, useState } from "react";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { PaperclipIcon } from "lucide-react";
@@ -29,13 +29,13 @@ interface Props {
   openOAuth: boolean;
 }
 
-// then wire up retrieving it from linear and rendering it on the front end correctly
-
 export default function TaskInput(props: Props): ReactElement {
   const { mutate, setOpenOAuth, openOAuth } = props;
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [priority, setPriority] = useState<string>("low");
   const [description, setDescription] = useState<string>("");
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
   const user = useSession();
 
   const form = useForm<z.infer<typeof taskSchema>>({
@@ -149,6 +149,17 @@ export default function TaskInput(props: Props): ReactElement {
     };
   }, [editor, setDescription, form]);
 
+  const handlePaperclipClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  // TODO: finish up the image uploading
+  // linear can take in a base64 encoded URL, so we'll just do that and then we attempt to upload the entire task, we'll
+  // attempt the image upload
+  // we also need to support multiple images
+
   return (
     <div className="shadow-md border border-gray-300 dark:border-gray-700 p-2 dark:bg-[#141617] rounded-lg flex flex-col gap-2 dark:shadow-[#141617]">
       <Form {...form}>
@@ -179,9 +190,35 @@ export default function TaskInput(props: Props): ReactElement {
           <div className="w-full justify-between flex">
             <div className="flex flex-row gap-4 items-center">
               <PriorityTabs setPriority={setPriority} />
-              <Button variant="ghost" size="sm">
+              <Button variant="ghost" size="sm" onClick={handlePaperclipClick}>
                 <PaperclipIcon className="w-4 h-4" />
               </Button>
+              <input
+                type="file"
+                ref={fileInputRef}
+                style={{ display: "none" }}
+                onChange={async (e) => {
+                  const files = Array.from(e.currentTarget.files || []);
+                  const file = files[0];
+
+                  const formData = new FormData();
+                  formData.append("file", file);
+
+                  const result = await fetch("/api/uploadFileToLinear", {
+                    method: "POST",
+                    body: formData,
+                  });
+                  const json = await result.json();
+
+                  if (result.ok) {
+                    toast.success("File uploaded successfully!");
+                  } else {
+                    toast.error("Error uploading file");
+                  }
+
+                  e.target.value = "";
+                }}
+              />
             </div>
             <div className="flex flex-row gap-2">
               {isFormDirty ||
