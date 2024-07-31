@@ -45,24 +45,27 @@ export default function Page() {
         {data?.roadmap.map((status) => (
           <div className="flex flex-col gap-2 w-full" key={status.title}>
             <h1>{status.title}</h1>
-            {status.tasks
-              .sort(
-                (a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]
-              )
-              .map((task) => (
-                <Task
-                  title={task.title}
-                  description={task.description}
-                  upVotes={task.upVotes}
-                  key={task.title}
-                  stage={status.title}
-                  issueId={task.id}
-                  mutate={mutate}
-                  priority={task.priority}
-                  setOpenOAuth={setOpenOAuth}
-                  openOAuth={openOAuth}
-                />
-              ))}
+            <div className="flex flex-col gap-4">
+              {status.tasks
+                .sort(
+                  (a, b) =>
+                    priorityOrder[a.priority] - priorityOrder[b.priority]
+                )
+                .map((task) => (
+                  <Task
+                    title={task.title}
+                    description={task.description}
+                    upVotes={task.upVotes}
+                    key={task.title}
+                    stage={status.title}
+                    issueId={task.id}
+                    mutate={mutate}
+                    priority={task.priority}
+                    setOpenOAuth={setOpenOAuth}
+                    openOAuth={openOAuth}
+                  />
+                ))}
+            </div>
           </div>
         ))}
       </div>

@@ -1,7 +1,6 @@
 "use client";
-import { ReactElement, useState } from "react";
+import { ReactElement, useEffect, useState } from "react";
 import { Input } from "../ui/input";
-import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
 import { PaperclipIcon } from "lucide-react";
 import { Tabs } from "../tabs";
@@ -11,17 +10,18 @@ import { useForm } from "react-hook-form";
 import { taskSchema } from "@/lib/types/zod";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import Spinner from "../ui/spinner";
 import { toast } from "sonner";
 import { KeyedMutator } from "swr";
 import { useSession } from "next-auth/react";
+import { useEditor, EditorContent, JSONContent, Editor } from "@tiptap/react";
+import CodeBlock from "@tiptap/extension-code-block";
+import Document from "@tiptap/extension-document";
+import Paragraph from "@tiptap/extension-paragraph";
+import Text from "@tiptap/extension-text";
+import Code from "@tiptap/extension-code";
+import { Placeholder } from "@tiptap/extension-placeholder";
 
 interface Props {
   mutate: KeyedMutator<GetTasksResponse>;
@@ -29,10 +29,13 @@ interface Props {
   openOAuth: boolean;
 }
 
+// then wire up retrieving it from linear and rendering it on the front end correctly
+
 export default function TaskInput(props: Props): ReactElement {
   const { mutate, setOpenOAuth, openOAuth } = props;
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [priority, setPriority] = useState<string>("low");
+  const [description, setDescription] = useState<string>("");
   const user = useSession();
 
   const form = useForm<z.infer<typeof taskSchema>>({
@@ -79,6 +82,7 @@ export default function TaskInput(props: Props): ReactElement {
       await CreateTask(values.title, priority, values?.description ?? "");
       toast.success("Successfully created task!");
       setIsSubmitting(false);
+      editor?.commands.setContent("");
       form.reset();
     } catch (error: any) {
       setIsSubmitting(false);
@@ -106,6 +110,44 @@ export default function TaskInput(props: Props): ReactElement {
 
   const isFormDirty = Object.keys(form.formState.dirtyFields).length > 0;
 
+  const editor = useEditor({
+    extensions: [
+      Document,
+      Paragraph,
+      Text,
+      Placeholder.configure({
+        placeholder: "Task Description. You can use text or code.",
+      }),
+      Code.configure({
+        HTMLAttributes: {
+          class: "tt-custom-code",
+        },
+      }),
+      CodeBlock.configure({
+        HTMLAttributes: {
+          class: "tt-custom-code-block",
+          exitOnTripleEnter: true,
+          exitOnArrowDown: true,
+        },
+      }),
+    ],
+    content: "",
+  });
+
+  useEffect(() => {
+    if (editor) {
+      editor.on("update", () => {
+        setDescription(parseDocument(editor.getJSON()));
+        form.setValue("description", parseDocument(editor.getJSON()));
+      });
+    }
+    return () => {
+      if (editor) {
+        editor.destroy();
+      }
+    };
+  }, [editor, setDescription, form]);
+
   return (
     <div className="shadow-md border border-gray-300 dark:border-gray-700 p-2 dark:bg-[#141617] rounded-lg flex flex-col gap-2 dark:shadow-[#141617]">
       <Form {...form}>
@@ -128,21 +170,10 @@ export default function TaskInput(props: Props): ReactElement {
               </FormItem>
             )}
           />
-          <FormField
-            control={form.control}
-            name="description"
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <Textarea
-                    placeholder="Task Description. You can use text or code."
-                    className="border-none focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-ring focus-visible:ring-offset-0 text-sm placeholder:text-gray-300 dark:placeholder:text-gray-700 dark:bg-[#141617] "
-                    {...field}
-                  />
-                </FormControl>
-              </FormItem>
-            )}
-          />
+          <div className="pl-3 min-h-[80px]">
+            <EditorContent editor={editor} />
+          </div>
+          <EditorContent editor={editor} />
           <Separator className="dark:bg-gray-700" />
           <div className="w-full justify-between flex">
             <div className="flex flex-row gap-4 items-center">
@@ -152,16 +183,20 @@ export default function TaskInput(props: Props): ReactElement {
               </Button>
             </div>
             <div className="flex flex-row gap-2">
-              {isFormDirty && (
-                <Button
-                  className="rounded-xl"
-                  type="submit"
-                  variant="secondary"
-                  onClick={() => form.reset()}
-                >
-                  Clear
-                </Button>
-              )}
+              {isFormDirty ||
+                (description && (
+                  <Button
+                    className="rounded-xl"
+                    type="submit"
+                    variant="secondary"
+                    onClick={() => {
+                      editor?.commands.setContent("");
+                      form.reset();
+                    }}
+                  >
+                    Clear
+                  </Button>
+                ))}
               <Button
                 className="rounded-xl"
                 type="submit"
@@ -225,4 +260,31 @@ async function CreateTask(
     throw new Error(body.message);
   }
   return await res.json();
+}
+
+function parseContent(content: JSONContent[]): string {
+  return content
+    .map((item) => {
+      if (item.type === "text") {
+        const isInlineCode = item.marks?.some((mark) => mark.type === "code");
+        return isInlineCode ? `\`${item.text}\`` : item.text;
+      }
+      return "";
+    })
+    .join("");
+}
+
+function parseNode(node: JSONContent): string {
+  if (node.type === "paragraph") {
+    return parseContent(node.content ?? []) + "\n";
+  } else if (node.type === "codeBlock") {
+    const codeContent = parseContent(node.content ?? []);
+    return `\`\`\`\n${codeContent}\n\`\`\`\n`;
+  }
+  return "";
+}
+
+function parseDocument(document: JSONContent): string {
+  if (!document.content) return "";
+  return document.content.map((node) => parseNode(node)).join("");
 }
