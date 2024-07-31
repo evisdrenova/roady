@@ -116,7 +116,8 @@ export default function TaskInput(props: Props): ReactElement {
       Paragraph,
       Text,
       Placeholder.configure({
-        placeholder: "Task Description. You can use text or code.",
+        placeholder:
+          "Task Description. You can use text and/or code by using `backticks` around your code snippet.",
       }),
       Code.configure({
         HTMLAttributes: {

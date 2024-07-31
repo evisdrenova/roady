@@ -13,12 +13,15 @@ import { auth } from "@/auth";
 import { useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import UserProfile from "@/components/UserProfile";
 
 export default function Page() {
   const session = useSession();
   const isUserAuthenticated = useSession().data ? true : false;
   const { data, isLoading, mutate } = useGetTasks();
   const [openOAuth, setOpenOAuth] = useState<boolean>(false);
+
+  console.log(session);
 
   if (isLoading || !mutate) {
     return <MainSkeleton />;
@@ -32,9 +35,10 @@ export default function Page() {
 
   return (
     <div className="w-full flex flex-col gap-6 py-6">
-      <div className="flex justify-end items-center gap-4">
+      <div className="flex flex-row justify-end items-center gap-2">
         <ModeToggle />
         <GoogleOAuth setOpenOAuth={setOpenOAuth} openOAuth={openOAuth} />
+        <UserProfile />
       </div>
       <TaskInput
         mutate={mutate}

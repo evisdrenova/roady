@@ -7,6 +7,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { RxAvatar } from "react-icons/rx";
+import { Button } from "./ui/button";
 
 export default function UserProfile(): ReactElement {
   const session = useSession();
@@ -19,7 +20,9 @@ export default function UserProfile(): ReactElement {
       {session.status == "authenticated" && (
         <DropdownMenu>
           <DropdownMenuTrigger>
-            <RxAvatar className="w-6 h-6" />
+            <Button variant="ghost" size="icon" className="rounded">
+              <RxAvatar className="w-5 h-5" />
+            </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
             <DropdownMenuItem onClick={() => signOutButton()}>
