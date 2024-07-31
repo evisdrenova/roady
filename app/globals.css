@@ -89,13 +89,28 @@
   }
 }
 
-.tiptap p.is-editor-empty:first-child::before {
-  color: #4b5563;
-  content: attr(data-placeholder);
-  float: left;
-  height: 0;
-  pointer-events: none;
-  font-size: 14px;
+/* For light theme */
+@media (prefers-color-scheme: light) {
+  .tiptap p.is-editor-empty:first-child::before {
+    color: #d1d5db; /* Light gray color for light theme */
+    content: attr(data-placeholder);
+    float: left;
+    height: 0;
+    pointer-events: none;
+    font-size: 14px;
+  }
+}
+
+/* For dark theme */
+@media (prefers-color-scheme: dark) {
+  .tiptap p.is-editor-empty:first-child::before {
+    color: #4b5563; /* Dark gray color for dark theme */
+    content: attr(data-placeholder);
+    float: left;
+    height: 0;
+    pointer-events: none;
+    font-size: 14px;
+  }
 }
 
 .ProseMirror-focused {
