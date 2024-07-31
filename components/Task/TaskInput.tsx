@@ -29,7 +29,6 @@ interface Props {
   openOAuth: boolean;
 }
 
-// Wire up tiptap so that it gets stored in linear correctly as well
 // then wire up retrieving it from linear and rendering it on the front end correctly
 
 export default function TaskInput(props: Props): ReactElement {
@@ -184,19 +183,20 @@ export default function TaskInput(props: Props): ReactElement {
               </Button>
             </div>
             <div className="flex flex-row gap-2">
-              {isFormDirty && (
-                <Button
-                  className="rounded-xl"
-                  type="submit"
-                  variant="secondary"
-                  onClick={() => {
-                    editor?.commands.setContent("");
-                    form.reset();
-                  }}
-                >
-                  Clear
-                </Button>
-              )}
+              {isFormDirty ||
+                (description && (
+                  <Button
+                    className="rounded-xl"
+                    type="submit"
+                    variant="secondary"
+                    onClick={() => {
+                      editor?.commands.setContent("");
+                      form.reset();
+                    }}
+                  >
+                    Clear
+                  </Button>
+                ))}
               <Button
                 className="rounded-xl"
                 type="submit"
