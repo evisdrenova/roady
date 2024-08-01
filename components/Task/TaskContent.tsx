@@ -11,24 +11,26 @@ interface Props {
   stage: string;
   priority: string;
   setOpenTaskSheet: () => void;
+  description: string;
 }
 
 export default function TaskContent(props: Props): ReactElement {
-  const { title, setOpenTaskSheet, stage, priority } = props;
+  const { title, setOpenTaskSheet, stage, priority, description } = props;
 
   return (
     <Button
       variant="ghost"
-      className="w-4/5 group h-20"
+      className="w-4/5 group h-24"
       onClick={setOpenTaskSheet}
     >
-      <div className="flex flex-col gap-2 text-left w-full ">
-        <div>
-          <div className="flex flex-row items-center gap-2">
-            {handleIcon(stage)}
-            <h2>{title}</h2>
-            <ArrowTopRightIcon className="hidden group-hover:inline-block transition-opacity duration-300" />
-          </div>
+      <div className="flex flex-col gap-3 text-left w-full ">
+        <div className="flex flex-row items-center gap-2">
+          {handleIcon(stage)}
+          <h2>{title}</h2>
+          <ArrowTopRightIcon className="hidden group-hover:inline-block transition-opacity duration-300" />
+        </div>
+        <div className="text-xs pl-5 text-gray-400 font-light">
+          {description}
         </div>
         <div className="pl-5">
           <BadgeBar priority={priority} />

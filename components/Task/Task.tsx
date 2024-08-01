@@ -40,6 +40,7 @@ export default function Task(props: Props): ReactElement {
         setOpenTaskSheet={() => buttonRef.current?.click()}
         stage={stage}
         priority={priority}
+        description={description}
       />
       <UpVoteButton
         upVotes={upVotes}

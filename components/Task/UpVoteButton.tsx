@@ -78,7 +78,7 @@ export default function UpVoteButton(props: Props): ReactElement {
   return (
     <Button
       variant="ghost"
-      className="w-1/5 h-20 border-l border-l-gray-200 dark:border-gray-700 flex flex-col gap-2 group"
+      className="w-1/5 h-24 border-l border-l-gray-200 dark:border-gray-700 flex flex-col gap-2 group"
       onClick={() => handleUpVote(issueId, title, upVotes)}
     >
       <div className="transform transition-transform group-hover:-translate-y-[3px]">
