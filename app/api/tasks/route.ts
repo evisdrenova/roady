@@ -71,16 +71,25 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   const teams = await lc.teams();
   const team = teams.nodes[0];
 
-  // automatically set the issue to the backlog stages
-  const res = await lc.createIssue({
-    teamId: team.id,
-    title: formatTitleWithUpVote(body.title, 1),
-    projectId: process.env.PROJECT_ID,
-    description: body.description,
-    priority: convertPriorityStringToNumber(body.priority),
-  });
+  try {
+    let imageUrl;
+    if (body.image) {
+      imageUrl = await uploadFileToLinear(base64ToFile(body.image, "image"));
+    }
 
-  return NextResponse.json(res.success, { status: 200 });
+    // automatically set the issue to the backlog stages
+    const res = await lc.createIssue({
+      teamId: team.id,
+      title: formatTitleWithUpVote(body.title, 1),
+      projectId: process.env.PROJECT_ID,
+      description: body.description + " " + imageUrl,
+      priority: convertPriorityStringToNumber(body.priority),
+    });
+
+    return NextResponse.json(res.success, { status: 200 });
+  } catch (e) {
+    return NextResponse.json(e, { status: 500 });
+  }
 }
 
 export function formatTitleWithUpVote(t: string, upVote: number): string {
@@ -129,4 +138,51 @@ function extractUpvotes(t: string): number {
   }
 
   return 0;
+}
+
+async function uploadFileToLinear(file: File): Promise<string> {
+  const lc = new LinearClient({
+    apiKey: process.env.LINEAR_API_KEY,
+  });
+  const uploadPayload = await lc.fileUpload(file.type, file.name, file.size);
+
+  if (!uploadPayload.success || !uploadPayload.uploadFile) {
+    throw new Error("Failed to request upload URL");
+  }
+
+  const uploadUrl = uploadPayload.uploadFile.uploadUrl;
+  const assetUrl = uploadPayload.uploadFile.assetUrl;
+
+  const headers = new Headers();
+  headers.set("Content-Type", file.type);
+  headers.set("Cache-Control", "public, max-age=31536000");
+  uploadPayload.uploadFile.headers.forEach(({ key, value }) =>
+    headers.set(key, value)
+  );
+
+  try {
+    await fetch(uploadUrl, {
+      method: "PUT",
+      headers,
+      body: file,
+    });
+
+    return assetUrl;
+  } catch (e) {
+    console.error(e);
+    throw new Error("Failed to upload file to Linear");
+  }
+}
+
+function base64ToFile(base64String: string, filename: string): File {
+  const byteString = atob(base64String);
+  const ab = new ArrayBuffer(byteString.length);
+  const ia = new Uint8Array(ab);
+
+  for (let i = 0; i < byteString.length; i++) {
+    ia[i] = byteString.charCodeAt(i);
+  }
+
+  const blob = new Blob([ab], { type: "image/jpeg" });
+  return new File([blob], filename, { type: "image/jpeg" });
 }

@@ -16,13 +16,11 @@ export default function UserProfile(): ReactElement {
     await signOut();
   };
   return (
-    <div>
+    <>
       {session.status == "authenticated" && (
         <DropdownMenu>
-          <DropdownMenuTrigger>
-            <Button variant="ghost" size="icon" className="rounded">
-              <RxAvatar className="w-5 h-5" />
-            </Button>
+          <DropdownMenuTrigger className="rounded">
+            <RxAvatar className="w-5 h-5" />
           </DropdownMenuTrigger>
           <DropdownMenuContent>
             <DropdownMenuItem onClick={() => signOutButton()}>
@@ -31,6 +29,6 @@ export default function UserProfile(): ReactElement {
           </DropdownMenuContent>
         </DropdownMenu>
       )}
-    </div>
+    </>
   );
 }

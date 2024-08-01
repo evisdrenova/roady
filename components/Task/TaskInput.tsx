@@ -29,11 +29,17 @@ interface Props {
   openOAuth: boolean;
 }
 
+interface ImageData {
+  id: string;
+  base64: string;
+}
+
 export default function TaskInput(props: Props): ReactElement {
   const { mutate, setOpenOAuth, openOAuth } = props;
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [priority, setPriority] = useState<string>("low");
   const [description, setDescription] = useState<string>("");
+  const [images, setImages] = useState<ImageData[]>([]);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const user = useSession();
@@ -44,6 +50,7 @@ export default function TaskInput(props: Props): ReactElement {
     defaultValues: {
       title: "",
       description: "",
+      image: "",
     },
   });
 
@@ -79,11 +86,17 @@ export default function TaskInput(props: Props): ReactElement {
       return { ...data, roadmap: updatedRoadmap };
     }, false);
     try {
-      await CreateTask(values.title, priority, values?.description ?? "");
+      await CreateTask(
+        values.title,
+        priority,
+        values?.description ?? "",
+        values?.image ?? ""
+      );
       toast.success("Successfully created task!");
       setIsSubmitting(false);
       editor?.commands.setContent("");
       form.reset();
+      setImages([]);
     } catch (error: any) {
       setIsSubmitting(false);
       toast.error("Unable to create new task");
@@ -149,17 +162,40 @@ export default function TaskInput(props: Props): ReactElement {
     };
   }, [editor, setDescription, form]);
 
-  const handlePaperclipClick = () => {
+  const handlePaperclipClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
     if (fileInputRef.current) {
       fileInputRef.current.click();
     }
   };
 
-  // TODO: finish up the image uploading
-  // linear can take in a base64 encoded URL, so we'll just do that and then we attempt to upload the entire task, we'll
-  // attempt the image upload
-  // we also need to support multiple images
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result?.toString().split(",")[1];
+        if (base64String) {
+          const newImage = { id: file.name, base64: base64String };
+          setImages([...images, newImage]);
+          form.setValue("image", base64String);
+          // clears the input if a file is selected, removed and then the same one is selected again
+          if (fileInputRef.current) {
+            fileInputRef.current.value = "";
+          }
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
+  const handleRemoveImage = (id: string) => {
+    setImages(images.filter((image) => image.id !== id));
+    form.setValue("image", "");
+  };
+
+  console.log("form", form.getValues());
   return (
     <div className="shadow-md border border-gray-300 dark:border-gray-700 p-2 dark:bg-[#141617] rounded-lg flex flex-col gap-2 dark:shadow-[#141617]">
       <Form {...form}>
@@ -197,44 +233,26 @@ export default function TaskInput(props: Props): ReactElement {
                 type="file"
                 ref={fileInputRef}
                 style={{ display: "none" }}
-                onChange={async (e) => {
-                  const files = Array.from(e.currentTarget.files || []);
-                  const file = files[0];
-
-                  const formData = new FormData();
-                  formData.append("file", file);
-
-                  const result = await fetch("/api/uploadFileToLinear", {
-                    method: "POST",
-                    body: formData,
-                  });
-                  const json = await result.json();
-
-                  if (result.ok) {
-                    toast.success("File uploaded successfully!");
-                  } else {
-                    toast.error("Error uploading file");
-                  }
-
-                  e.target.value = "";
-                }}
+                onClick={(e) => e.stopPropagation()}
+                onChange={handleFileChange}
               />
+              <ImageHolder images={images} onRemoveImage={handleRemoveImage} />
             </div>
             <div className="flex flex-row gap-2">
-              {isFormDirty ||
-                (description && (
-                  <Button
-                    className="rounded-xl"
-                    type="submit"
-                    variant="secondary"
-                    onClick={() => {
-                      editor?.commands.setContent("");
-                      form.reset();
-                    }}
-                  >
-                    Clear
-                  </Button>
-                ))}
+              {(isFormDirty || images.length > 0 || description) && (
+                <Button
+                  className="rounded-xl"
+                  type="submit"
+                  variant="secondary"
+                  onClick={() => {
+                    editor?.commands.setContent("");
+                    form.reset();
+                    setImages([]);
+                  }}
+                >
+                  Clear
+                </Button>
+              )}
               <Button
                 className="rounded-xl"
                 type="submit"
@@ -280,7 +298,8 @@ const PriorityTabs = ({ setPriority }: PriorityTabsProps): ReactElement => {
 async function CreateTask(
   title: string,
   priority: string,
-  description?: string
+  description?: string,
+  image?: string
 ): Promise<CreateTaskResponse> {
   const res = await fetch(`/api/tasks`, {
     method: "POST",
@@ -291,6 +310,7 @@ async function CreateTask(
       title: title,
       description: description,
       priority: priority,
+      image: image,
     }),
   });
   if (!res.ok) {
@@ -325,4 +345,33 @@ function parseNode(node: JSONContent): string {
 function parseDocument(document: JSONContent): string {
   if (!document.content) return "";
   return document.content.map((node) => parseNode(node)).join("");
+}
+
+interface ImageHolderProps {
+  images: ImageData[];
+  onRemoveImage: (id: string) => void;
+}
+
+function ImageHolder(props: ImageHolderProps): ReactElement {
+  const { images, onRemoveImage } = props;
+  return (
+    <div className="flex flex-wrap gap-2">
+      {images.map((image) => (
+        <div key={image.id} className="relative w-10 h-10">
+          <img
+            src={`data:image/jpeg;base64,${image.base64}`}
+            alt={image.id}
+            className="w-full h-full object-cover rounded"
+          />
+          <button
+            type="button"
+            onClick={() => onRemoveImage(image.id)}
+            className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full p-1 px-2 text-xs"
+          >
+            X
+          </button>
+        </div>
+      ))}
+    </div>
+  );
 }

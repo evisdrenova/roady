@@ -15,8 +15,6 @@ export default function Page() {
   const { data, isLoading, mutate } = useGetTasks();
   const [openOAuth, setOpenOAuth] = useState<boolean>(false);
 
-  console.log(session);
-
   if (isLoading || !mutate) {
     return <MainSkeleton />;
   }
