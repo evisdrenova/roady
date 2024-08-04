@@ -64,7 +64,7 @@ export default function TaskInput(props: Props): ReactElement {
 
     const newTask = {
       title: values.title,
-      description: values.description ?? "",
+      description: values.description,
       priority,
       upVotes: 1,
       id: tempTaskId,
@@ -89,7 +89,7 @@ export default function TaskInput(props: Props): ReactElement {
       await CreateTask(
         values.title,
         priority,
-        values?.description ?? "",
+        values?.description,
         values?.image ?? ""
       );
       toast.success("Successfully created task!");
@@ -298,7 +298,7 @@ const PriorityTabs = ({ setPriority }: PriorityTabsProps): ReactElement => {
 async function CreateTask(
   title: string,
   priority: string,
-  description?: string,
+  description: string,
   image?: string
 ): Promise<CreateTaskResponse> {
   const res = await fetch(`/api/tasks`, {

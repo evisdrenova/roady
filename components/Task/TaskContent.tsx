@@ -26,14 +26,12 @@ export default function TaskContent(props: Props): ReactElement {
       <div className="flex flex-col gap-3 text-left w-full ">
         <div className="flex flex-row items-center gap-2">
           {handleIcon(stage)}
-          <h2>{title}</h2>
+          <h2 className="truncate overflow-hidden max-w-[140px]">{title}</h2>
+          <Badge variant="outline">{priority}</Badge>
           <ArrowTopRightIcon className="hidden group-hover:inline-block transition-opacity duration-300" />
         </div>
-        <div className="text-xs pl-5 text-gray-400 font-light">
+        <div className="text-xs pl-5 text-gray-400 font-light truncate overflow-hidden w-[200px]">
           {description}
-        </div>
-        <div className="pl-5">
-          <BadgeBar priority={priority} />
         </div>
       </div>
     </Button>
@@ -55,17 +53,16 @@ export const handleIcon = (stage: string): ReactElement => {
 
 interface BadgeBarProps {
   priority: string;
+  upVotes?: number;
 }
 
 export function BadgeBar(props: BadgeBarProps): ReactElement {
-  const { priority } = props;
+  const { priority, upVotes } = props;
 
   return (
     <div className="flex flex-row items-center gap-2 text-xs">
       <Badge variant="outline">{priority}</Badge>
-      <Badge variant="outline" className="gap-2">
-        <BiMessageRounded /> <div>7</div>
-      </Badge>
+      <Badge variant="outline">+ {upVotes}</Badge>
     </div>
   );
 }
