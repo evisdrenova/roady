@@ -39,6 +39,8 @@ async function buildRoadmap(issues: IssueConnection) {
       const stateName = state.name;
       const statePosition = state.position;
 
+      const description = removeMarkdownLink(issue.description || "");
+
       if (!stages[stateName]) {
         stages[stateName] = {
           title: stateName,
@@ -48,7 +50,7 @@ async function buildRoadmap(issues: IssueConnection) {
       }
       stages[stateName].tasks.push({
         title: stripUpvotesFromTitle(issue.title),
-        description: issue.description || "",
+        description: description,
         priority: convertPriorityNumberToString(issue.priority ?? 4),
         upVotes: extractUpvotes(issue.title),
         id: issue.id,
@@ -77,15 +79,18 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       imageUrl = await uploadFileToLinear(base64ToFile(body.image, "image"));
     }
 
-    let taskLink = "https://www.cnn.com";
+    const taskLink = "https://www.cnn.com";
+
+    const description = imageUrl
+      ? `${body.description} ![Image](${imageUrl}) \n\n[View this task in Roady](${taskLink})`
+      : `${body.description}  \n\n[View this task in Roady](${taskLink})`;
 
     // automatically set the issue to the backlog stages
     const res = await lc.createIssue({
       teamId: team.id,
       title: formatTitleWithUpVote(body.title, 1),
       projectId: process.env.PROJECT_ID,
-      // description: body.description + " " + imageUrl,
-      description: `${body.description} ![Image](${imageUrl}) \n\n[View this task in Roady](${taskLink})`,
+      description: description,
       priority: convertPriorityStringToNumber(body.priority),
     });
 
@@ -188,4 +193,9 @@ function base64ToFile(base64String: string, filename: string): File {
 
   const blob = new Blob([ab], { type: "image/jpeg" });
   return new File([blob], filename, { type: "image/jpeg" });
+}
+// removes [Roady](xxxx) the link from the linear description
+function removeMarkdownLink(str: string) {
+  const regex = /\[View this task in Roady\]\(.*?\)/g;
+  return str.replace(regex, "");
 }
