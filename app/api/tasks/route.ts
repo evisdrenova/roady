@@ -77,12 +77,15 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       imageUrl = await uploadFileToLinear(base64ToFile(body.image, "image"));
     }
 
+    let taskLink = "https://www.cnn.com";
+
     // automatically set the issue to the backlog stages
     const res = await lc.createIssue({
       teamId: team.id,
       title: formatTitleWithUpVote(body.title, 1),
       projectId: process.env.PROJECT_ID,
-      description: body.description + " " + imageUrl,
+      // description: body.description + " " + imageUrl,
+      description: `${body.description} ![Image](${imageUrl}) \n\n[View this task in Roady](${taskLink})`,
       priority: convertPriorityStringToNumber(body.priority),
     });
 
