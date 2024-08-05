@@ -81,7 +81,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
     const taskLink = "https://www.cnn.com";
 
-    const dedescription = imageUrl
+    const description = imageUrl
       ? `${body.description} ![Image](${imageUrl}) \n\n[View this task in Roady](${taskLink})`
       : `${body.description}  \n\n[View this task in Roady](${taskLink})`;
 
@@ -90,7 +90,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       teamId: team.id,
       title: formatTitleWithUpVote(body.title, 1),
       projectId: process.env.PROJECT_ID,
-      description: `${body.description} ![Image](${imageUrl}) \n\n[View this task in Roady](${taskLink})`,
+      description: description,
       priority: convertPriorityStringToNumber(body.priority),
     });
 
