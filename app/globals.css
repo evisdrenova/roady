@@ -87,17 +87,17 @@
   .tt-custom-code-block {
     @apply text-gray-800 dark:text-gray-100 rounded bg-gray-200 dark:bg-gray-700 px-4 py-[2px] inline-block text-xs;
   }
-}
 
-/* For light theme */
-@media (prefers-color-scheme: light) {
-  .tiptap p.is-editor-empty:first-child::before {
-    color: #4b5563; /* Light gray color for light theme */
+  .tiptap-placeholder::before {
     content: attr(data-placeholder);
     float: left;
     height: 0;
     pointer-events: none;
     font-size: 14px;
+  }
+
+  .tiptap-placeholder::before {
+    @apply dark:text-gray-700 text-gray-400;
   }
 }
 

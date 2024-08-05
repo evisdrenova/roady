@@ -131,6 +131,7 @@ export default function TaskInput(props: Props): ReactElement {
       Placeholder.configure({
         placeholder:
           "Task Description. You can use text and/or code by using `backticks` around your code snippet.",
+        emptyEditorClass: "tiptap-placeholder",
       }),
       Code.configure({
         HTMLAttributes: {
@@ -218,7 +219,7 @@ export default function TaskInput(props: Props): ReactElement {
               </FormItem>
             )}
           />
-          <div className="pl-3 min-h-[80px]">
+          <div className="pl-3 min-h-[80px] text-sm ">
             <EditorContent editor={editor} />
           </div>
           <EditorContent editor={editor} />

@@ -62,7 +62,7 @@ interface DialogTaskBodyProps {
 function DialogTaskBody(props: DialogTaskBodyProps): ReactElement {
   const { description } = props;
   return (
-    <div className="flex flex-col p-6 text-wrap break-all">
+    <div className="flex text-sm flex-col p-6 text-wrap break-all">
       <div>{description}</div>
     </div>
   );
