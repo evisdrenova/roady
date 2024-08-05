@@ -5,6 +5,7 @@ import { Badge } from "../ui/badge";
 import { BiMessageRounded, BiMessageSquareDots } from "react-icons/bi";
 import { TbCircleDashed } from "react-icons/tb";
 import { Circle } from "lucide-react";
+import { RemoveMarkdownImagnLink } from "./TaskDialog";
 
 interface Props {
   title: string;
@@ -31,7 +32,7 @@ export default function TaskContent(props: Props): ReactElement {
           <ArrowTopRightIcon className="hidden group-hover:inline-block transition-opacity duration-300" />
         </div>
         <div className="text-xs pl-5 text-gray-400 font-light truncate overflow-hidden w-[200px]">
-          {description}
+          {RemoveMarkdownImagnLink(description)}
         </div>
       </div>
     </Button>

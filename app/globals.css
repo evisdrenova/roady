@@ -97,7 +97,7 @@
   }
 
   .tiptap-placeholder::before {
-    @apply dark:text-gray-700 text-gray-400;
+    @apply dark:text-gray-700 text-gray-300;
   }
 }
 

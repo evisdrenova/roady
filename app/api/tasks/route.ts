@@ -79,14 +79,17 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       imageUrl = await uploadFileToLinear(base64ToFile(body.image, "image"));
     }
 
-    let taskLink = "https://www.cnn.com";
+    const taskLink = "https://www.cnn.com";
+
+    const dedescription = imageUrl
+      ? `${body.description} ![Image](${imageUrl}) \n\n[View this task in Roady](${taskLink})`
+      : `${body.description}  \n\n[View this task in Roady](${taskLink})`;
 
     // automatically set the issue to the backlog stages
     const res = await lc.createIssue({
       teamId: team.id,
       title: formatTitleWithUpVote(body.title, 1),
       projectId: process.env.PROJECT_ID,
-      // description: body.description + " " + imageUrl,
       description: `${body.description} ![Image](${imageUrl}) \n\n[View this task in Roady](${taskLink})`,
       priority: convertPriorityStringToNumber(body.priority),
     });
@@ -191,10 +194,8 @@ function base64ToFile(base64String: string, filename: string): File {
   const blob = new Blob([ab], { type: "image/jpeg" });
   return new File([blob], filename, { type: "image/jpeg" });
 }
-
-// removes the link to the issue from the linear description
+// removes [Roady](xxxx) the link from the linear description
 function removeMarkdownLink(str: string) {
-  // Regex to match [View this task in Roady](xxxx)
   const regex = /\[View this task in Roady\]\(.*?\)/g;
   return str.replace(regex, "");
 }
