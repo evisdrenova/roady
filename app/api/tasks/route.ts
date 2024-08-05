@@ -39,6 +39,8 @@ async function buildRoadmap(issues: IssueConnection) {
       const stateName = state.name;
       const statePosition = state.position;
 
+      const description = removeMarkdownLink(issue.description || "");
+
       if (!stages[stateName]) {
         stages[stateName] = {
           title: stateName,
@@ -48,7 +50,7 @@ async function buildRoadmap(issues: IssueConnection) {
       }
       stages[stateName].tasks.push({
         title: stripUpvotesFromTitle(issue.title),
-        description: issue.description || "",
+        description: description,
         priority: convertPriorityNumberToString(issue.priority ?? 4),
         upVotes: extractUpvotes(issue.title),
         id: issue.id,
@@ -188,4 +190,11 @@ function base64ToFile(base64String: string, filename: string): File {
 
   const blob = new Blob([ab], { type: "image/jpeg" });
   return new File([blob], filename, { type: "image/jpeg" });
+}
+
+// removes the link to the issue from the linear description
+function removeMarkdownLink(str: string) {
+  // Regex to match [View this task in Roady](xxxx)
+  const regex = /\[View this task in Roady\]\(.*?\)/g;
+  return str.replace(regex, "");
 }
