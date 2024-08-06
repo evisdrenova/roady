@@ -43,10 +43,11 @@ By default, auth mode is enabled in Roady. This is to ensure that you're not get
 
 ```ts
 // roady.config.ts
+const config = {
+  authMode: "true",
+};
 
-{
-    "auth-mode": false
-}
+export default config;
 ```
 
 On startup, Roady will read in the configs from this file and configure itself accordingly.
