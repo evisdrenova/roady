@@ -6,11 +6,14 @@ export async function GET(): Promise<NextResponse> {
   const lc = new LinearClient({
     apiKey: process.env.LINEAR_API_KEY,
   });
-  // gets the project using the projectId that you want to use
-  const proj = await lc.project(process.env.PROJECT_ID ?? "");
+
+  // finds all projects with that name exactly but ignores case
+  const proj = await lc.projects({
+    filter: { name: { eqIgnoreCase: process.env.PROJECT_NAME ?? "" } },
+  });
 
   // gets all of the issues for that project
-  const issues = await proj.issues();
+  const issues = await proj.nodes[0].issues();
 
   // Build the roadmap based on the stages of the issues
   const roadmap = await buildRoadmap(issues);

@@ -19,7 +19,7 @@ In order to run Roady, you'll need a few things:
 
 1. Linear API Key -> this is used to talk to your Linear instance. To create a new Linear api key, follow [these instructions](https://developers.linear.app/docs/graphql/working-with-the-graphql-api#authentication) and create a Personal API Key.
 2. Google OAuth credentials - if you're running Roady in auth mode, you'll need Google OAuth credentials. Follow [this guide](https://developers.google.com/identity/protocols/oauth2/javascript-implicit-flow) to create Google OAuth credentials and an application. Make sure that you set the right scopes. Set these as environment variables so that roady can read them in.
-3. Linear Project ID - Roady pulls issues from a given linear project. Include the name of the project that you want to render your public tickets.
+3. Linear Project Name - Roady pulls issues from a given linear project. Include the name of the project that you want to render your public tickets and set it as an environment variable named `PROJECT_NAME`. For example, `PROJECT_NAME="Public Roadmap"`
 
 ## Running Roady in un-Auth mode
 
@@ -39,4 +39,3 @@ On startup, Roady will read in the configs from this file and configure itself a
 
 1. Track which users submit tasks and upvote tasks and save to ticket
 2. OAuth seems to sometimes not pick up the cookie on page refresh, probably no refresh token is persisting
-3. Use project name instead of project id
