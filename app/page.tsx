@@ -8,6 +8,7 @@ import { useState } from "react";
 import GoogleOAuth from "@/components/GoogleOAuth";
 import { useSession } from "next-auth/react";
 import UserProfile from "@/components/UserProfile";
+import TopNavBar from "@/components/TopNavBar";
 
 export default function Page() {
   const session = useSession();
@@ -27,11 +28,7 @@ export default function Page() {
 
   return (
     <div className="w-full flex flex-col gap-6 py-6">
-      <div className="flex flex-row justify-end items-center gap-2">
-        <ModeToggle />
-        <GoogleOAuth setOpenOAuth={setOpenOAuth} openOAuth={openOAuth} />
-        <UserProfile />
-      </div>
+      <TopNavBar setOpenOAuth={setOpenOAuth} openOAuth={openOAuth} />
       <TaskInput
         mutate={mutate}
         setOpenOAuth={setOpenOAuth}
