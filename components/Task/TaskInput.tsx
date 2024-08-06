@@ -196,9 +196,11 @@ export default function TaskInput(props: Props): ReactElement {
     form.setValue("image", "");
   };
 
-  console.log("form", form.getValues());
   return (
-    <div className="shadow-md border border-gray-300 dark:border-gray-700 p-2 dark:bg-[#141617] rounded-lg flex flex-col gap-2 dark:shadow-[#141617]">
+    <div
+      className="shadow-md border border-gray-300 dark:border-gray-700 p-2 dark:bg-[#141617] rounded-lg flex flex-col gap-2 dark:shadow-[#141617] lg:min-w-[729px]"
+      id="input-task"
+    >
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <FormField
