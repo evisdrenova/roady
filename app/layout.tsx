@@ -1,5 +1,4 @@
 import "./globals.css";
-import { Toaster } from "sonner";
 import { ThemeProvider } from "next-themes";
 import SessionWrapper from "@/components/SessionWrapper";
 import ThemedToaster from "@/components/ui/ThemedToaster";

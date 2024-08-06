@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { IssueConnection, LinearClient } from "@linear/sdk";
+import { formatTitleWithUpVote } from "@/lib/utils";
 
 export async function GET(): Promise<NextResponse> {
   const lc = new LinearClient({
@@ -98,10 +99,6 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   } catch (e) {
     return NextResponse.json(e, { status: 500 });
   }
-}
-
-export function formatTitleWithUpVote(t: string, upVote: number): string {
-  return t + `  --  {{upVotes:${upVote}}}`;
 }
 
 function stripUpvotesFromTitle(t: string): string {

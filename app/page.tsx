@@ -3,11 +3,8 @@ import { useGetTasks } from "@/lib/hooks/useGetTasks";
 import Task from "../components/Task/Task";
 import TaskInput from "@/components/Task/TaskInput";
 import MainSkeleton from "@/components/ui/MainSkeleton";
-import { ModeToggle } from "@/components/ModeToggle";
 import { useState } from "react";
-import GoogleOAuth from "@/components/GoogleOAuth";
 import { useSession } from "next-auth/react";
-import UserProfile from "@/components/UserProfile";
 import TopNavBar from "@/components/TopNavBar";
 
 export default function Page() {
