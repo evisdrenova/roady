@@ -10,8 +10,8 @@ export default function RootLayout({
 }>) {
   return (
     <SessionWrapper>
-      <html lang="en">
-        <body>
+      <html lang="en" suppressHydrationWarning={true}>
+        <body suppressHydrationWarning={true}>
           <ThemeProvider
             attribute="class"
             defaultTheme="system"

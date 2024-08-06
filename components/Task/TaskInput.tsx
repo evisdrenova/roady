@@ -148,6 +148,7 @@ export default function TaskInput(props: Props): ReactElement {
       }),
     ],
     content: "",
+    immediatelyRender: false,
   });
 
   useEffect(() => {
