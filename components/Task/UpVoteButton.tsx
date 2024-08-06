@@ -1,4 +1,3 @@
-import { formatTitleWithUpVote } from "@/app/api/tasks/route";
 import { Button } from "@/components/ui/button";
 import { CaretUpIcon } from "@radix-ui/react-icons";
 import { ReactElement, useState } from "react";
@@ -7,6 +6,7 @@ import { GetTasksResponse } from "@/lib/types/types";
 import { KeyedMutator } from "swr";
 import { toast } from "sonner";
 import { useSession } from "next-auth/react";
+import { formatTitleWithUpVote } from "@/lib/utils";
 
 interface Props {
   upVotes: number;
