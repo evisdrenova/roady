@@ -32,7 +32,7 @@ LINEAR_API_KEY=XXXX
 PROJECT_NAME="Public Roadmap"
 GOOGLE_ID=XXXXX
 GOOGLE_SECRET=XXXXX
-NEXTAUTH_URL=http://localhost:3001
+NEXTAUTH_URL=http://localhost:3001 #update to include your actual URL here
 AUTH_SECRET="XXXX" # Added by `npx auth`. Read more: https://cli.authjs.dev
 
 ```
