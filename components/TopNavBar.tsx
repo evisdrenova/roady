@@ -18,9 +18,11 @@ export default function TopNavBar(props: Props): ReactElement {
       <Link href="/">
         <Image src="/roady_logo.svg" width="24" height="24" alt="logo" />
       </Link>
-      <ModeToggle />
-      <GoogleOAuth setOpenOAuth={setOpenOAuth} openOAuth={openOAuth} />
-      <UserProfile />
+      <div className="flex flex-row gap-1">
+        <ModeToggle />
+        <GoogleOAuth setOpenOAuth={setOpenOAuth} openOAuth={openOAuth} />
+        <UserProfile />
+      </div>
     </div>
   );
 }
