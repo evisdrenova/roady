@@ -1,6 +1,6 @@
 // roady.config.js
 const config = {
-  authMode: "false",
+  authMode: "true",
 };
 
 module.exports = config;

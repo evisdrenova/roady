@@ -3,7 +3,7 @@ import { useGetTasks } from "@/lib/hooks/useGetTasks";
 import Task from "../components/Task/Task";
 import TaskInput from "@/components/Task/TaskInput";
 import MainSkeleton from "@/components/ui/MainSkeleton";
-import { useState } from "react";
+import { ReactElement, useState } from "react";
 import { useSession } from "next-auth/react";
 import TopNavBar from "@/components/TopNavBar";
 
@@ -31,37 +31,49 @@ export default function Page() {
         setOpenOAuth={setOpenOAuth}
         openOAuth={openOAuth}
       />
-      <div
-        className="flex flex-col lg:flex-row items-start gap-4 w-full"
-        id="maincontainter"
-      >
-        {data?.roadmap.map((status) => (
-          <div className="flex flex-col gap-2 w-full" key={status.title}>
-            <h1>{status.title}</h1>
-            <div className="flex flex-col gap-4">
-              {status.tasks
-                .sort(
-                  (a, b) =>
-                    priorityOrder[a.priority] - priorityOrder[b.priority]
-                )
-                .map((task) => (
-                  <Task
-                    title={task.title}
-                    description={task.description}
-                    upVotes={task.upVotes}
-                    key={task.title}
-                    stage={status.title}
-                    issueId={task.id}
-                    mutate={mutate}
-                    priority={task.priority}
-                    setOpenOAuth={setOpenOAuth}
-                    openOAuth={openOAuth}
-                  />
-                ))}
+      {data?.roadmap.length == 0 || !data?.roadmap ? (
+        <EmptyTaskState />
+      ) : (
+        <div
+          className="flex flex-col lg:flex-row items-start gap-4 w-full"
+          id="maincontainter"
+        >
+          {data?.roadmap.map((status) => (
+            <div className="flex flex-col gap-2 w-full" key={status.title}>
+              <h1>{status.title}</h1>
+              <div className="flex flex-col gap-4">
+                {status.tasks
+                  .sort(
+                    (a, b) =>
+                      priorityOrder[a.priority] - priorityOrder[b.priority]
+                  )
+                  .map((task) => (
+                    <Task
+                      title={task.title}
+                      description={task.description}
+                      upVotes={task.upVotes}
+                      key={task.title}
+                      stage={status.title}
+                      issueId={task.id}
+                      mutate={mutate}
+                      priority={task.priority}
+                      setOpenOAuth={setOpenOAuth}
+                      openOAuth={openOAuth}
+                    />
+                  ))}
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function EmptyTaskState(): ReactElement {
+  return (
+    <div className="flex justify-center items-center border dark:border-gray-700 border-gray-300 bg-gray-200 dark:bg-gray-700/10 backdrop-blur-sm text-sm p-20 rounded-lg ">
+      No Tasks found for this project!
     </div>
   );
 }
