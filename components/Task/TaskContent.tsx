@@ -31,7 +31,7 @@ export default function TaskContent(props: Props): ReactElement {
           <Badge variant="outline">{priority}</Badge>
           <ArrowTopRightIcon className="hidden group-hover:inline-block transition-opacity duration-300" />
         </div>
-        <div className="text-xs pl-5 text-gray-400 font-light truncate overflow-hidden w-[200px]">
+        <div className="text-xs pl-5 text-gray-400 font-light truncate overflow-hidden max-w-[200px]">
           {RemoveMarkdownImagnLink(description)}
         </div>
       </div>

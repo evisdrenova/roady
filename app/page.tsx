@@ -37,7 +37,10 @@ export default function Page() {
         setOpenOAuth={setOpenOAuth}
         openOAuth={openOAuth}
       />
-      <div className="flex flex-row items-start gap-4">
+      <div
+        className="flex flex-col lg:flex-row items-start gap-4 w-full"
+        id="maincontainter"
+      >
         {data?.roadmap.map((status) => (
           <div className="flex flex-col gap-2 w-full" key={status.title}>
             <h1>{status.title}</h1>
