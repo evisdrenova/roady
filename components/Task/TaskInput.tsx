@@ -22,6 +22,7 @@ import Paragraph from "@tiptap/extension-paragraph";
 import Text from "@tiptap/extension-text";
 import Code from "@tiptap/extension-code";
 import { Placeholder } from "@tiptap/extension-placeholder";
+import GoogleOAuth, { LoginWithGoogleButton } from "../GoogleOAuth";
 
 interface Props {
   mutate: KeyedMutator<GetTasksResponse>;
@@ -197,76 +198,86 @@ export default function TaskInput(props: Props): ReactElement {
   };
 
   return (
-    <div
-      className="shadow-md border border-gray-300 dark:border-gray-700 p-2 dark:bg-[#141617] rounded-lg flex flex-col gap-2 dark:shadow-[#141617] lg:min-w-[729px]"
-      id="input-task"
-    >
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-          <FormField
-            control={form.control}
-            name="title"
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <Input
-                    placeholder="Title"
-                    className="border-none focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-ring focus-visible:ring-offset-0 text-lg font-semibold placeholder:text-gray-300 dark:placeholder:text-gray-600 dark:bg-[#141617] "
-                    {...field}
-                    onChange={(e) => {
-                      field.onChange(e);
-                    }}
-                  />
-                </FormControl>
-              </FormItem>
-            )}
-          />
-          <div className="pl-3 min-h-[80px] text-sm ">
-            <EditorContent editor={editor} />
-          </div>
-          <EditorContent editor={editor} />
-          <Separator className="dark:bg-gray-700" />
-          <div className="w-full justify-between flex">
-            <div className="flex flex-row gap-4 items-center">
-              <PriorityTabs setPriority={setPriority} />
-              <Button variant="ghost" size="sm" onClick={handlePaperclipClick}>
-                <PaperclipIcon className="w-4 h-4" />
-              </Button>
-              <input
-                type="file"
-                ref={fileInputRef}
-                style={{ display: "none" }}
-                onClick={(e) => e.stopPropagation()}
-                onChange={handleFileChange}
-              />
-              <ImageHolder images={images} onRemoveImage={handleRemoveImage} />
+    <div className="relative">
+      {!user.data && <AuthCTA />}
+      <div
+        className="shadow-md border border-gray-300 dark:border-gray-700 p-2 dark:bg-[#141617] rounded-lg flex flex-col gap-2 dark:shadow-[#141617] lg:min-w-[729px]"
+        id="input-task"
+      >
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <FormField
+              control={form.control}
+              name="title"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input
+                      placeholder="Title"
+                      className="border-none focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-ring focus-visible:ring-offset-0 text-lg font-semibold placeholder:text-gray-300 dark:placeholder:text-gray-600 dark:bg-[#141617] "
+                      {...field}
+                      onChange={(e) => {
+                        field.onChange(e);
+                      }}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <div className="pl-3 min-h-[80px] text-sm ">
+              <EditorContent editor={editor} />
             </div>
-            <div className="flex flex-row gap-2">
-              {(isFormDirty || images.length > 0 || description) && (
+            <EditorContent editor={editor} />
+            <Separator className="dark:bg-gray-700" />
+            <div className="w-full justify-between flex">
+              <div className="flex flex-row gap-4 items-center">
+                <PriorityTabs setPriority={setPriority} />
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handlePaperclipClick}
+                >
+                  <PaperclipIcon className="w-4 h-4" />
+                </Button>
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  style={{ display: "none" }}
+                  onClick={(e) => e.stopPropagation()}
+                  onChange={handleFileChange}
+                />
+                <ImageHolder
+                  images={images}
+                  onRemoveImage={handleRemoveImage}
+                />
+              </div>
+              <div className="flex flex-row gap-2">
+                {(isFormDirty || images.length > 0 || description) && (
+                  <Button
+                    className="rounded-xl"
+                    type="submit"
+                    variant="secondary"
+                    onClick={() => {
+                      editor?.commands.setContent("");
+                      form.reset();
+                      setImages([]);
+                    }}
+                  >
+                    Clear
+                  </Button>
+                )}
                 <Button
                   className="rounded-xl"
                   type="submit"
-                  variant="secondary"
-                  onClick={() => {
-                    editor?.commands.setContent("");
-                    form.reset();
-                    setImages([]);
-                  }}
+                  disabled={isSubmitting || !form.formState.isValid}
                 >
-                  Clear
+                  {isSubmitting ? <Spinner /> : "Submit"}
                 </Button>
-              )}
-              <Button
-                className="rounded-xl"
-                type="submit"
-                disabled={isSubmitting || !form.formState.isValid}
-              >
-                {isSubmitting ? <Spinner /> : "Submit"}
-              </Button>
+              </div>
             </div>
-          </div>
-        </form>
-      </Form>
+          </form>
+        </Form>
+      </div>
     </div>
   );
 }
@@ -375,6 +386,14 @@ function ImageHolder(props: ImageHolderProps): ReactElement {
           </button>
         </div>
       ))}
+    </div>
+  );
+}
+
+function AuthCTA(): ReactElement {
+  return (
+    <div className="absolute top-0 left-0 w-full h-full flex flex-col justify-center items-center bg-gray-100 bg-opacity-10  backdrop-blur-sm z-50 rounded-lg">
+      <LoginWithGoogleButton />
     </div>
   );
 }

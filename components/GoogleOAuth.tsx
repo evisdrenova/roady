@@ -27,16 +27,27 @@ export default function GoogleOAuth(props: Props): ReactElement {
           <DialogTitle>Verify your email to continue</DialogTitle>
         </DialogHeader>
         <div className="grid gap-4 py-4">
-          <Button
-            onClick={launchGoogleOAuth}
-            className="rounded space-x-2"
-            size="sm"
-          >
-            <FcGoogle />
-            <div>Login with Google</div>
-          </Button>
+          <LoginWithGoogleButton />
         </div>
       </DialogContent>
     </Dialog>
+  );
+}
+
+export function LoginWithGoogleButton(): ReactElement {
+  const launchGoogleOAuth = async () => {
+    await signIn("google");
+  };
+  return (
+    <div>
+      <Button
+        onClick={launchGoogleOAuth}
+        className="rounded space-x-2"
+        size="sm"
+      >
+        <FcGoogle />
+        <div>Login with Google</div>
+      </Button>
+    </div>
   );
 }
