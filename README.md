@@ -20,6 +20,7 @@ In order to run Roady, you'll need a few things:
 1. Linear API Key -> this is used to talk to your Linear instance. To create a new Linear api key, follow [these instructions](https://developers.linear.app/docs/graphql/working-with-the-graphql-api#authentication) and create a Personal API Key.
 2. Google OAuth credentials - if you're running Roady in auth mode, you'll need Google OAuth credentials. Follow [this guide](https://developers.google.com/identity/protocols/oauth2/javascript-implicit-flow) to create Google OAuth credentials and an application. Make sure that you set the right scopes. Set these as environment variables so that roady can read them in.
 3. Linear Project Name - Roady pulls issues from a given linear project. Include the name of the project that you want to render your public tickets and set it as an environment variable named `PROJECT_NAME`. For example, `PROJECT_NAME="Public Roadmap"`
+4. Auth secret - you can create an auth secret by running `openssl rand -base64 33` in your terminal and copying and pasting the resulting string into an environment variables called `AUTH_SECRET`.
 
 ### Environment Variables
 
