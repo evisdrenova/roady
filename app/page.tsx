@@ -72,7 +72,7 @@ export default function Page() {
 
 function EmptyTaskState(): ReactElement {
   return (
-    <div className="flex justify-center items-center border dark:border-gray-700 border-gray-300 bg-gray-200 dark:bg-gray-700/10 backdrop-blur-sm text-sm p-20 rounded-lg ">
+    <div className="flex justify-center items-center border dark:border-gray-700 border-gray-300 bg-gray-50 dark:bg-gray-700/10 backdrop-blur-sm text-sm p-20 rounded-lg ">
       No Tasks found for this project!
     </div>
   );

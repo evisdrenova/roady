@@ -42,7 +42,7 @@ export default function TaskInput(props: Props): ReactElement {
   const [description, setDescription] = useState<string>("");
   const [images, setImages] = useState<ImageData[]>([]);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const authMode = process.env.NEXT_PUBLIC_AUTH_MODE;
+  const authMode = process.env.AUTH_MODE;
   const user = useSession();
 
   const form = useForm<z.infer<typeof taskSchema>>({
@@ -200,7 +200,7 @@ export default function TaskInput(props: Props): ReactElement {
 
   return (
     <div className="relative">
-      {authMode && <AuthCTA />}
+      {authMode && !user.data && <AuthCTA />}
       <div
         className="shadow-md border border-gray-300 dark:border-gray-700 p-2 dark:bg-[#141617] rounded-lg flex flex-col gap-2 dark:shadow-[#141617] lg:min-w-[729px]"
         id="input-task"
