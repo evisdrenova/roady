@@ -8,8 +8,6 @@ import { useSession } from "next-auth/react";
 import TopNavBar from "@/components/TopNavBar";
 
 export default function Page() {
-  const session = useSession();
-  const isUserAuthenticated = useSession().data ? true : false;
   const { data, isLoading, mutate } = useGetTasks();
   const [openOAuth, setOpenOAuth] = useState<boolean>(false);
 

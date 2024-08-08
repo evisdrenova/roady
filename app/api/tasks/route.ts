@@ -73,6 +73,10 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     apiKey: process.env.LINEAR_API_KEY,
   });
 
+  const proj = await lc.projects({
+    filter: { name: { eqIgnoreCase: process.env.PROJECT_NAME ?? "" } },
+  });
+
   const body = await req.json();
   const teams = await lc.teams();
   const team = teams.nodes[0];
@@ -93,7 +97,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     const res = await lc.createIssue({
       teamId: team.id,
       title: formatTitleWithUpVote(body.title, 1),
-      projectId: process.env.PROJECT_ID,
+      projectId: proj.nodes[0].id,
       description: description,
       priority: convertPriorityStringToNumber(body.priority),
     });
