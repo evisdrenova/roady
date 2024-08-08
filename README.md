@@ -74,7 +74,7 @@ If you're using NextJS, you can ingest the project into your existing NextJS pro
 Some other things you want may to update:
 
 - favicon
-- home icons in the topbar
+- home icons in the top nav bar
 
 ## Roady Roadmap
 
