@@ -46,6 +46,8 @@ GOOGLE_SECRET=XXXXX
 AUTH_SECRET="XXXX" # Added by `npx auth`. Read more: https://cli.authjs.dev
 ```
 
+3. Once you have your environment variables set up, run `npm run dev` to start the project locally.
+
 ## Auth mode
 
 Roady can be run in either auth mode or non-auth mode. We recommend running Roady in auth mode as a way to ensure that only valid users submit/upvotes tasks. In order for auth mode to work, you'll need to create a Google OAuth application and pass in the `GOOGLE_ID` and `GOOGLE_SECRET` as environment variables.
