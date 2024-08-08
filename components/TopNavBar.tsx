@@ -5,6 +5,9 @@ import UserProfile from "./UserProfile";
 import Image from "next/image";
 import Link from "next/link";
 import { useTheme } from "next-themes";
+import { GitHubLogoIcon } from "@radix-ui/react-icons";
+import { Button } from "./ui/button";
+import { useRouter } from "next/navigation";
 
 interface Props {
   openOAuth: boolean;
@@ -15,6 +18,7 @@ export default function TopNavBar(props: Props): ReactElement {
   const { openOAuth, setOpenOAuth } = props;
 
   const theme = useTheme();
+  const router = useRouter();
 
   return (
     <div className="flex flex-row justify-between items-center gap-2">
@@ -36,6 +40,13 @@ export default function TopNavBar(props: Props): ReactElement {
         <ModeToggle />
         <GoogleOAuth setOpenOAuth={setOpenOAuth} openOAuth={openOAuth} />
         <UserProfile />
+        <Button
+          variant="ghost"
+          className="rounded"
+          onClick={() => router.push("https://github.com/evisdrenova/roady")}
+        >
+          <GitHubLogoIcon />
+        </Button>
       </div>
     </div>
   );
