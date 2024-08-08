@@ -66,7 +66,6 @@ function DialogTaskBody(props: DialogTaskBodyProps): ReactElement {
   const imageLink = parseImageFromTask(description);
   const cleanedDescription = RemoveMarkdownImagnLink(description);
 
-  console.log("imagelink", description);
   return (
     <div className="flex text-sm flex-col p-6 text-wrap break-all">
       <div>{cleanedDescription}</div>
