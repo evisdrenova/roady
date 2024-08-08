@@ -40,7 +40,7 @@ For example:
 
 ```bash
 LINEAR_API_KEY=XXXX
-PROJECT_NAME="Public Roadmap"
+PROJECT_NAME=Public Roadmap
 GOOGLE_ID=XXXXX
 GOOGLE_SECRET=XXXXX
 AUTH_SECRET="XXXX" # Added by `npx auth`. Read more: https://cli.authjs.dev
