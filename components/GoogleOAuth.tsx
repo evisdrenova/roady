@@ -26,7 +26,7 @@ export default function GoogleOAuth(props: Props): ReactElement {
         <DialogHeader>
           <DialogTitle>Verify your email to continue</DialogTitle>
         </DialogHeader>
-        <div className="grid gap-4 py-4">
+        <div className="flex justify-center py-4">
           <LoginWithGoogleButton />
         </div>
       </DialogContent>
