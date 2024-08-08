@@ -6,13 +6,13 @@ Roady uses Linear as a back-end and directly syncs with a linear project.
 
 Roady is built using:
 
-- nextJS
-- typescript
-- zod
-- tailwind
-- shadcn
-- react-hook-form
-- nextauth
+- NextJS
+- Typescript
+- Zod
+- Tailwind
+- Shadcn
+- React-hook-form
+- Nextauth
 
 ## Features
 
