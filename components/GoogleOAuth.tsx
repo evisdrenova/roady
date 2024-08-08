@@ -16,9 +16,6 @@ interface Props {
 
 export default function GoogleOAuth(props: Props): ReactElement {
   const { setOpenOAuth, openOAuth } = props;
-  const launchGoogleOAuth = async () => {
-    await signIn("google");
-  };
 
   return (
     <Dialog onOpenChange={() => setOpenOAuth((prev) => !prev)} open={openOAuth}>

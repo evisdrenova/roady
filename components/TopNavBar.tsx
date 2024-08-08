@@ -16,7 +16,6 @@ interface Props {
 
 export default function TopNavBar(props: Props): ReactElement {
   const { openOAuth, setOpenOAuth } = props;
-
   const theme = useTheme();
   const router = useRouter();
 

@@ -20,7 +20,7 @@ export default function UserProfile(): ReactElement {
       {session.status == "authenticated" && (
         <DropdownMenu>
           <DropdownMenuTrigger className="rounded">
-            <RxAvatar className="w-5 h-5" />
+            <RxAvatar />
           </DropdownMenuTrigger>
           <DropdownMenuContent>
             <DropdownMenuItem onClick={() => signOutButton()}>
