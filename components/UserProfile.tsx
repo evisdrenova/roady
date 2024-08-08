@@ -7,7 +7,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { RxAvatar } from "react-icons/rx";
-import { Button } from "./ui/button";
 
 export default function UserProfile(): ReactElement {
   const session = useSession();
@@ -19,7 +18,7 @@ export default function UserProfile(): ReactElement {
     <>
       {session.status == "authenticated" && (
         <DropdownMenu>
-          <DropdownMenuTrigger className="rounded">
+          <DropdownMenuTrigger className="rounded hover:bg-gray-100 px-3">
             <RxAvatar />
           </DropdownMenuTrigger>
           <DropdownMenuContent>
