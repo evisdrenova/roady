@@ -2,10 +2,7 @@
 import { ReactElement } from "react";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
-  DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -13,7 +10,6 @@ import {
 import { Button } from "../ui/button";
 import { BadgeBar, handleIcon } from "./TaskContent";
 import { Separator } from "../ui/separator";
-import Image from "next/image";
 
 interface Props {
   buttonRef: React.RefObject<HTMLButtonElement>;

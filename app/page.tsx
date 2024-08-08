@@ -4,7 +4,6 @@ import Task from "../components/Task/Task";
 import TaskInput from "@/components/Task/TaskInput";
 import MainSkeleton from "@/components/ui/MainSkeleton";
 import { ReactElement, useState } from "react";
-import { useSession } from "next-auth/react";
 import TopNavBar from "@/components/TopNavBar";
 
 export default function Page() {

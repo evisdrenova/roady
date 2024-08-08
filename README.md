@@ -71,6 +71,11 @@ On startup, Roady will read in the configs from this file and configure itself a
 
 If you're using NextJS, you can ingest the project into your existing NextJS project and make the main `page.tsx` file available at a route such as `/roadmap`. Otherwise, you can run Roady separately and, for example, host it on a subdomain such as `roadmap.xyz.com` redirect to it on link/button click.
 
+Some other things you want may to update:
+
+- favicon
+- home icons in the topbar
+
 ## Roady Roadmap
 
 1. Track which users submit/upvote tasks and save to ticket metadata only for auth mode

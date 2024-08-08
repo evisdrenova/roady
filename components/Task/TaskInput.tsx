@@ -22,7 +22,7 @@ import Paragraph from "@tiptap/extension-paragraph";
 import Text from "@tiptap/extension-text";
 import Code from "@tiptap/extension-code";
 import { Placeholder } from "@tiptap/extension-placeholder";
-import GoogleOAuth, { LoginWithGoogleButton } from "../GoogleOAuth";
+import { LoginWithGoogleButton } from "../GoogleOAuth";
 
 interface Props {
   mutate: KeyedMutator<GetTasksResponse>;

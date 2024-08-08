@@ -2,7 +2,6 @@ import { ReactElement } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowTopRightIcon, Half2Icon } from "@radix-ui/react-icons";
 import { Badge } from "../ui/badge";
-import { BiMessageRounded, BiMessageSquareDots } from "react-icons/bi";
 import { TbCircleDashed } from "react-icons/tb";
 import { Circle } from "lucide-react";
 import { RemoveMarkdownImagnLink } from "./TaskDialog";
