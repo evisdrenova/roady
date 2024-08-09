@@ -56,6 +56,7 @@ export default function Page() {
                       priority={task.priority}
                       setOpenOAuth={setOpenOAuth}
                       openOAuth={openOAuth}
+                      numStages={data.roadmap.length}
                     />
                   ))}
               </div>

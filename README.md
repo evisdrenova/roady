@@ -77,10 +77,3 @@ Some other things you want may to update:
 
 - favicon
 - home icons in the top nav bar
-
-## Roady Roadmap
-
-1. Track which users submit/upvote tasks and save to ticket metadata only for auth mode
-2. Support multi-image uploads to tasks
-3. Allow users to set a flag to not show a specific issue in the public roadmap
-4. Support pasting images directly into the input box

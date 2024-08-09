@@ -5,6 +5,7 @@ import { Badge } from "../ui/badge";
 import { TbCircleDashed } from "react-icons/tb";
 import { Circle } from "lucide-react";
 import { RemoveMarkdownImagnLink } from "./TaskDialog";
+import { cn } from "@/lib/utils";
 
 interface Props {
   title: string;
@@ -12,10 +13,38 @@ interface Props {
   priority: string;
   setOpenTaskSheet: () => void;
   description: string;
+  numStages: number;
 }
 
 export default function TaskContent(props: Props): ReactElement {
-  const { title, setOpenTaskSheet, stage, priority, description } = props;
+  const { title, setOpenTaskSheet, stage, priority, description, numStages } =
+    props;
+
+  const handleTitleMaxWidth = (numStages: number): number => {
+    switch (numStages) {
+      case 1:
+        return 700;
+      case 2:
+        return 400;
+      case 3:
+        return 140;
+      default:
+        return 140;
+    }
+  };
+
+  const handleDescriptionMaxWidth = (numStages: number): number => {
+    switch (numStages) {
+      case 1:
+        return 1000;
+      case 2:
+        return 400;
+      case 3:
+        return 200;
+      default:
+        return 200;
+    }
+  };
 
   return (
     <Button
@@ -26,11 +55,19 @@ export default function TaskContent(props: Props): ReactElement {
       <div className="flex flex-col gap-3 text-left w-full ">
         <div className="flex flex-row items-center gap-2">
           {handleIcon(stage)}
-          <h2 className="truncate overflow-hidden max-w-[140px]">{title}</h2>
+          <h2
+            className="truncate overflow-hidden"
+            style={{ maxWidth: `${handleTitleMaxWidth(numStages)}px` }}
+          >
+            {title}
+          </h2>
           <Badge variant="outline">{priority}</Badge>
           <ArrowTopRightIcon className="hidden group-hover:inline-block transition-opacity duration-300" />
         </div>
-        <div className="text-xs pl-5 text-gray-400 font-light truncate overflow-hidden max-w-[200px]">
+        <div
+          className="text-xs pl-5 text-gray-400 font-light truncate overflow-hidden"
+          style={{ maxWidth: `${handleDescriptionMaxWidth(numStages)}px` }}
+        >
           {RemoveMarkdownImagnLink(description)}
         </div>
       </div>

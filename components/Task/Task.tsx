@@ -1,5 +1,5 @@
 "use client";
-import { ReactElement, useRef, useState } from "react";
+import { ReactElement, useRef } from "react";
 import UpVoteButton from "./UpVoteButton";
 import TaskContent from "./TaskContent";
 import { KeyedMutator } from "swr";
@@ -16,6 +16,7 @@ interface Props {
   mutate: KeyedMutator<GetTasksResponse>;
   setOpenOAuth: (val: boolean) => void;
   openOAuth: boolean;
+  numStages: number;
 }
 
 export default function Task(props: Props): ReactElement {
@@ -29,6 +30,7 @@ export default function Task(props: Props): ReactElement {
     priority,
     setOpenOAuth,
     openOAuth,
+    numStages,
   } = props;
 
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -41,6 +43,7 @@ export default function Task(props: Props): ReactElement {
         stage={stage}
         priority={priority}
         description={description}
+        numStages={numStages}
       />
       <UpVoteButton
         upVotes={upVotes}
